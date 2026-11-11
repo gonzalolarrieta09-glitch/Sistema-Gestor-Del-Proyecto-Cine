@@ -13,11 +13,11 @@
     <nav>
       <ul>
         <li><a href="#" class="active">Cartelera</a></li>
-        <li><a href="#">Estrenos INCAA</a></li>
-        <li><a href="#">Promociones</a></li>
+        <li><a href="#" id="navEstrenos">Estrenos INCAA</a></li>
+        <li><a href="#" id="navPromos">Promociones</a></li>
       </ul>
     </nav>
-    <button class="btn-login">Iniciar Sesión</button>
+    <button class="btn-login" id="btnLogin">Iniciar Sesión</button>
   </header>
 
   <!-- Selector de Días -->
@@ -42,8 +42,6 @@
     <h2 class="section-title">En Cartelera - INCAA</h2>
 
     <div class="movies-grid">
-
-      <!-- Película 1 -->
       <article class="movie-card">
         <img class="movie-poster" src="https://picsum.photos/300/450?random=21" alt="Puan">
         <div class="movie-info">
@@ -53,7 +51,6 @@
         </div>
       </article>
 
-      <!-- Película 2 -->
       <article class="movie-card">
         <img class="movie-poster" src="https://picsum.photos/300/450?random=22" alt="Argentina, 1985">
         <div class="movie-info">
@@ -63,7 +60,6 @@
         </div>
       </article>
 
-      <!-- Película 3 -->
       <article class="movie-card">
         <img class="movie-poster" src="https://picsum.photos/300/450?random=23" alt="Trenque Lauquen">
         <div class="movie-info">
@@ -73,7 +69,6 @@
         </div>
       </article>
 
-      <!-- Película 4 -->
       <article class="movie-card">
         <img class="movie-poster" src="https://picsum.photos/300/450?random=24" alt="Blondi">
         <div class="movie-info">
@@ -82,7 +77,6 @@
           <button class="movie-btn">Quiero ver esto</button>
         </div>
       </article>
-
     </div>
   </main>
 
@@ -97,9 +91,7 @@
         <div class="screen-text">Pantalla</div>
       </div>
 
-      <div class="seats-grid" id="seatsContainer">
-        <!-- Generado por JavaScript -->
-      </div>
+      <div class="seats-grid" id="seatsContainer"></div>
 
       <div class="wheelchair-row">
         <div class="wheelchair-icon">♿ Zona Accesible 14</div>
