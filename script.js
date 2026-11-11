@@ -1,5 +1,40 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Selector de días interactivo
+  // Estado de autenticación simulado (false = no logueado, true = logueado)
+  let usuarioLogueado = false;
+
+  // Botón / Enlace de Iniciar Sesión
+  const btnLogin = document.getElementById('btnLogin');
+  btnLogin.addEventListener('click', () => {
+    if (!usuarioLogueado) {
+      const email = prompt("Ingresa tu correo electrónico para iniciar sesión en CineNova:");
+      if (email) {
+        usuarioLogueado = true;
+        btnLogin.textContent = "Mi Cuenta";
+        btnLogin.style.backgroundColor = "#28a745";
+        alert(`¡Bienvenido/a! Sesión iniciada correctamente.`);
+      }
+    } else {
+      if (confirm("¿Deseas cerrar sesión?")) {
+        usuarioLogueado = false;
+        btnLogin.textContent = "Iniciar Sesión";
+        btnLogin.style.backgroundColor = "#e50914";
+        alert("Sesión cerrada.");
+      }
+    }
+  });
+
+  // Control de enlaces del menú que no tenían función asignada
+  document.getElementById('navEstrenos').addEventListener('click', (e) => {
+    e.preventDefault();
+    alert("Estrenos INCAA: Visualizando catálogo oficial actualizado de cine nacional.");
+  });
+
+  document.getElementById('navPromos').addEventListener('click', (e) => {
+    e.preventDefault();
+    alert("Promociones vigentes: 2x1 con tarjetas adheridas y beneficios CineNova Club.");
+  });
+
+  // Selector de días interactivo
   const dateBtns = document.querySelectorAll('.date-btn');
   dateBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -8,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 2. Modal y Butacas
+  // Modal y Butacas
   const modal = document.getElementById('ticketModal');
   const modalTitle = document.getElementById('modalMovieTitle');
   const closeBtn = document.querySelector('.modal-close');
@@ -82,8 +117,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // REGLA DE NEGOCIO: Obligar a iniciar sesión antes de elegir butacas
   showBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
+      if (!usuarioLogueado) {
+        alert("⚠️ Debes iniciar sesión antes de seleccionar entradas y butacas.");
+        btnLogin.focus();
+        return;
+      }
+
       const card = e.target.closest('.movie-card');
       const movieTitle = card.querySelector('.movie-title').textContent;
       if (modalTitle) modalTitle.textContent = `Seleccioná tu butaca - ${movieTitle}`;
@@ -109,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (selected.length === 0) {
       alert('Por favor selecciona al menos una butaca.');
     } else {
-      alert(`¡Excelente! Has seleccionado ${selected.length} butaca(s). ¡Redirigiendo al pago!`);
+      alert(`¡Compra iniciada con éxito! Has seleccionado ${selected.length} butaca(s). Generando comprobante fiscal...`);
       modal.classList.remove('open');
     }
   });
