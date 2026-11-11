@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CanCine - Cartelera y Entradas</title>
+  <title>CineNova - Cartelera y Entradas</title>
   <style>
     :root {
       --bg-dark: #0f1117;
@@ -12,6 +12,9 @@
       --accent-gold: #ffb400;
       --text-main: #ffffff;
       --text-muted: #a0a5b5;
+      --seat-available: #ffffff;
+      --seat-selected: #e50914;
+      --seat-text: #000000;
     }
 
     * {
@@ -64,8 +67,7 @@
       transition: color 0.2s;
     }
 
-    nav a:hover,
-    nav a.active {
+    nav a:hover, nav a.active {
       color: var(--accent-gold);
     }
 
@@ -87,15 +89,15 @@
     /* Hero Banner */
     .hero {
       background: linear-gradient(180deg, rgba(15,17,23,0.3) 0%, rgba(15,17,23,1) 100%), 
-                  url('https://picsum.photos/1200/500?random=10') center/cover no-repeat;
-      height: 60vh;
+                  url('https://picsum.photos/1200/500?random=15') center/cover no-repeat;
+      height: 50vh;
       display: flex;
       align-items: flex-end;
       padding: 3rem 5%;
     }
 
     .hero-content h1 {
-      font-size: 3rem;
+      font-size: 2.8rem;
       margin-bottom: 0.5rem;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
     }
@@ -106,44 +108,46 @@
       max-width: 500px;
     }
 
-    .btn-ticket {
-      background-color: var(--accent-gold);
-      color: #000;
-      padding: 0.8rem 1.8rem;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-      font-weight: 800;
+    /* Selector de Días */
+    .date-selector-container {
+      background-color: #141721;
+      padding: 1.2rem 5%;
+      border-bottom: 1px solid #222;
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+    }
+
+    .date-btn {
+      background-color: var(--bg-card);
+      color: var(--text-muted);
+      border: 1px solid #2a2e39;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
       cursor: pointer;
-      text-transform: uppercase;
-      transition: transform 0.2s;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.2s;
     }
 
-    .btn-ticket:hover {
-      transform: scale(1.05);
+    .date-btn.active, .date-btn:hover {
+      background-color: var(--accent-red);
+      color: #fff;
+      border-color: var(--accent-red);
     }
 
-    /* Container & Filters */
+    /* Container & Grid */
     .container {
       padding: 3rem 5%;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
     }
 
     .section-title {
       font-size: 1.8rem;
       border-left: 4px solid var(--accent-red);
       padding-left: 0.8rem;
+      margin-bottom: 2rem;
     }
 
-    /* Cartelera Grid */
     .movies-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -186,7 +190,7 @@
     .movie-meta {
       font-size: 0.85rem;
       color: var(--text-muted);
-      margin-bottom: 1.0rem;
+      margin-bottom: 1rem;
     }
 
     .movie-btn {
@@ -194,7 +198,7 @@
       background-color: var(--accent-red);
       color: white;
       border: none;
-      padding: 0.6rem;
+      padding: 0.7rem;
       border-radius: 4px;
       font-weight: bold;
       cursor: pointer;
@@ -207,16 +211,17 @@
       background-color: #b80710;
     }
 
-    /* Modal */
+    /* Modal de Selección de Butacas (Estilo exacto solicitado) */
     .modal {
       display: none;
       position: fixed;
       inset: 0;
-      background-color: rgba(0, 0, 0, 0.8);
+      background-color: rgba(0, 0, 0, 0.85);
       z-index: 200;
       justify-content: center;
       align-items: center;
       padding: 1rem;
+      overflow-y: auto;
     }
 
     .modal.open {
@@ -226,48 +231,171 @@
     .modal-content {
       background-color: var(--bg-card);
       padding: 2rem;
-      border-radius: 8px;
-      max-width: 500px;
+      border-radius: 12px;
+      max-width: 650px;
       width: 100%;
       position: relative;
       border: 1px solid var(--accent-red);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .modal-close {
       position: absolute;
       top: 1rem;
-      right: 1rem;
+      right: 1.2rem;
       background: none;
       border: none;
       color: var(--text-muted);
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       cursor: pointer;
     }
 
     .modal-title {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
       color: var(--accent-gold);
+      text-align: center;
     }
 
-    .schedules-group {
+    /* Estructura de Cine y Pantalla */
+    .screen-container {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .screen-bar {
+      background: linear-gradient(90deg, transparent, #fff, transparent);
+      height: 4px;
+      width: 80%;
+      margin: 0 auto 0.5rem auto;
+      border-radius: 2px;
+    }
+
+    .screen-text {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Layout de Butacas */
+    .seats-grid {
       display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 1.5rem;
     }
 
-    .schedule-btn {
-      background-color: #252936;
-      color: white;
-      border: 1px solid #3a3f52;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
+    .seat-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .row-number {
+      color: var(--text-muted);
+      font-weight: bold;
+      width: 20px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .seats-block {
+      display: flex;
+      gap: 6px;
+    }
+
+    .aisle {
+      width: 25px; /* Pasillo central */
+    }
+
+    .seat {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: var(--seat-available);
+      color: var(--seat-text);
+      font-size: 0.75rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
+      border: none;
+      transition: transform 0.1s, background-color 0.2s;
     }
 
-    .schedule-btn:hover {
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
+    .seat:hover {
+      transform: scale(1.15);
+    }
+
+    .seat.selected {
+      background-color: var(--seat-selected);
+      color: #fff;
+    }
+
+    .seat.disabled {
+      background-color: #333;
+      color: #777;
+      cursor: not-allowed;
+    }
+
+    .wheelchair-row {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 5px;
+    }
+
+    .wheelchair-icon {
+      background-color: #252a3a;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+    }
+
+    /* Leyenda */
+    .seat-legend {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+    }
+
+    .btn-confirmar {
+      background-color: var(--accent-gold);
+      color: #000;
+      border: none;
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      text-transform: uppercase;
+    }
+
+    .btn-confirmar:hover {
+      background-color: #ffa000;
     }
 
     /* Footer */
@@ -284,104 +412,210 @@
 <body>
 
   <header>
-    <div class="logo">Can<span>Cine</span></div>
+    <div class="logo">Cine<span>Nova</span></div>
     <nav>
       <ul>
         <li><a href="#" class="active">Cartelera</a></li>
-        <li><a href="#">Próximamente</a></li>
+        <li><a href="#">Estrenos INCAA</a></li>
         <li><a href="#">Promociones</a></li>
-        <li><a href="#">Candystore</a></li>
       </ul>
     </nav>
     <button class="btn-login">Iniciar Sesión</button>
   </header>
 
+  <!-- Selector de Días -->
+  <div class="date-selector-container">
+    <button class="date-btn active">Miércoles 11 Nov</button>
+    <button class="date-btn">Jueves 12 Nov</button>
+    <button class="date-btn">Viernes 13 Nov</button>
+    <button class="date-btn">Sábado 14 Nov</button>
+    <button class="date-btn">Domingo 15 Nov</button>
+    <button class="date-btn">Lunes 16 Nov</button>
+    <button class="date-btn">Martes 17 Nov</button>
+  </div>
+
   <section class="hero">
     <div class="hero-content">
-      <h1>ESTRENO EXCLUSIVO</h1>
-      <p>Disfruta de la mejor experiencia en CanCine con salas 4DX e IMAX con sonido envolvente.</p>
-      <button class="btn-ticket">Comprar Entradas</button>
+      <h1>ESTRENOS NACIONALES</h1>
+      <p>Disfruta de lo mejor del cine argentino con la más alta tecnología en imagen y sonido.</p>
     </div>
   </section>
 
   <main class="container">
-    <h2 class="section-title">En Cartelera</h2>
+    <h2 class="section-title">En Cartelera - INCAA</h2>
 
-    <div class="movies-grid" style="margin-top: 1.5rem;">
+    <div class="movies-grid">
 
       <!-- Película 1 -->
       <article class="movie-card">
-        <img class="movie-poster" src="https://picsum.photos/300/450?random=1" alt="Película 1">
+        <img class="movie-poster" src="https://picsum.photos/300/450?random=21" alt="Puan">
         <div class="movie-info">
-          <h3 class="movie-title">Misión Galáctica</h3>
-          <p class="movie-meta">Ciencia Ficción • 120 min</p>
-          <button class="movie-btn">Ver Horarios</button>
+          <h3 class="movie-title">Puan</h3>
+          <p class="movie-meta">Comedia / Drama • 110 min</p>
+          <button class="movie-btn">Quiero ver esto</button>
         </div>
       </article>
 
       <!-- Película 2 -->
       <article class="movie-card">
-        <img class="movie-poster" src="https://picsum.photos/300/450?random=2" alt="Película 2">
+        <img class="movie-poster" src="https://picsum.photos/300/450?random=22" alt="Argentina, 1985">
         <div class="movie-info">
-          <h3 class="movie-title">El Sombrío Destino</h3>
-          <p class="movie-meta">Suspenso / Drama • 105 min</p>
-          <button class="movie-btn">Ver Horarios</button>
+          <h3 class="movie-title">Argentina, 1985</h3>
+          <p class="movie-meta">Drama / Histórica • 140 min</p>
+          <button class="movie-btn">Quiero ver esto</button>
         </div>
       </article>
 
       <!-- Película 3 -->
       <article class="movie-card">
-        <img class="movie-poster" src="https://picsum.photos/300/450?random=3" alt="Película 3">
+        <img class="movie-poster" src="https://picsum.photos/300/450?random=23" alt="Trenque Lauquen">
         <div class="movie-info">
-          <h3 class="movie-title">Aventura en la Selva</h3>
-          <p class="movie-meta">Animación • 90 min</p>
-          <button class="movie-btn">Ver Horarios</button>
+          <h3 class="movie-title">Trenque Lauquen</h3>
+          <p class="movie-meta">Misterio / Romance • 260 min</p>
+          <button class="movie-btn">Quiero ver esto</button>
         </div>
       </article>
 
       <!-- Película 4 -->
       <article class="movie-card">
-        <img class="movie-poster" src="https://picsum.photos/300/450?random=4" alt="Película 4">
+        <img class="movie-poster" src="https://picsum.photos/300/450?random=24" alt="Blondi">
         <div class="movie-info">
-          <h3 class="movie-title">Rivalidad Máxima</h3>
-          <p class="movie-meta">Acción • 135 min</p>
-          <button class="movie-btn">Ver Horarios</button>
+          <h3 class="movie-title">Blondi</h3>
+          <p class="movie-meta">Comedia dramática • 87 min</p>
+          <button class="movie-btn">Quiero ver esto</button>
         </div>
       </article>
 
     </div>
   </main>
 
-  <!-- Modal de Funciones -->
+  <!-- Modal de Selección de Butacas (Distribución de 50 butacas estilo solicitado) -->
   <div class="modal" id="ticketModal">
     <div class="modal-content">
       <button class="modal-close">&times;</button>
-      <h3 class="modal-title" id="modalMovieTitle">Título de la Película</h3>
-      <p style="color: var(--text-muted); font-size: 0.9rem;">Selecciona el horario de función disponible:</p>
-      <div class="schedules-group">
-        <button class="schedule-btn">15:30</button>
-        <button class="schedule-btn">18:00</button>
-        <button class="schedule-btn">20:45</button>
+      <h3 class="modal-title" id="modalMovieTitle">Seleccioná tu butaca</h3>
+      
+      <div class="screen-container">
+        <div class="screen-bar"></div>
+        <div class="screen-text">Pantalla</div>
       </div>
+
+      <div class="seats-grid" id="seatsContainer">
+        <!-- Generado dinámicamente o estructurado -->
+      </div>
+
+      <div class="wheelchair-row">
+        <div class="wheelchair-icon">♿ Zona Accesible 14</div>
+      </div>
+
+      <div class="seat-legend">
+        <div class="legend-item"><div class="legend-dot" style="background: #fff;"></div> Disponible</div>
+        <div class="legend-item"><div class="legend-dot" style="background: #333;"></div> No disponible</div>
+        <div class="legend-item"><div class="legend-dot" style="background: #e50914;"></div> Seleccionado</div>
+      </div>
+
+      <button class="btn-confirmar" id="btnConfirmar">Confirmar Selección</button>
     </div>
   </div>
 
   <footer>
-    <p>&copy; 2026 CanCine. Todos los derechos reservados.</p>
+    <p>&copy; 2026 CineNova. Todos los derechos reservados.</p>
   </footer>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Selector de días interactivo
+      const dateBtns = document.querySelectorAll('.date-btn');
+      dateBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          dateBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+
+      // Modal y Butacas
       const modal = document.getElementById('ticketModal');
       const modalTitle = document.getElementById('modalMovieTitle');
       const closeBtn = document.querySelector('.modal-close');
       const showBtns = document.querySelectorAll('.movie-btn');
+      const seatsContainer = document.getElementById('seatsContainer');
+      const btnConfirmar = document.getElementById('btnConfirmar');
+
+      let selectedSeatsCount = 0;
+
+      // Generar esquema de butacas (aprox 50 butacas distribuidas en filas 2 a 13 con pasillo central)
+      const rowsData = [
+        { row: 2, left: [214, 212, 210, 28, 26, 24, 22], right: [21, 23, 25, 27, 29, 211] },
+        { row: 3, left: [314, 312, 310, 38, 36, 34, 32], right: [31, 33, 35, 37, 39, 311] },
+        { row: 4, left: [414, 412, 410, 48, 46, 44, 42], right: [41, 43, 45, 47, 49, 411] },
+        { row: 5, left: [514, 512, 510, 58, 56, 54, 52], right: [51, 53, 55, 57, 59, 511] },
+        { row: 6, left: [614, 612, 610, 68, 66, 64, 62], right: [61, 63, 65, 67, 69, 611] },
+        { row: 7, left: [714, 712, 710, 78, 76, 74, 72], right: [71, 73, 75, 77, 79, 711] },
+        { row: 8, left: [814, 812, 810, 88, 86, 84, 82], right: [81, 83, 85, 87, 89, 811] },
+        { row: 9, left: [912, 910, 98, 96, 94, 92], right: [91, 93, 95, 97, 99, 911] },
+        { row: 10, left: [1012, 1010, 108, 106, 104, 102], right: [101, 105, 107, 109, 1011] },
+      ];
+
+      function renderSeats() {
+        seatsContainer.innerHTML = '';
+        rowsData.forEach(r => {
+          const rowDiv = document.createElement('div');
+          rowDiv.className = 'seat-row';
+
+          const numLeft = document.createElement('span');
+          numLeft.className = 'row-number';
+          numLeft.textContent = r.row;
+          rowDiv.appendChild(numLeft);
+
+          const leftBlock = document.createElement('div');
+          leftBlock.className = 'seats-block';
+          r.left.forEach(seatNum => {
+            const seat = document.createElement('button');
+            seat.className = 'seat';
+            seat.textContent = seatNum;
+            // Ocupar algunas aleatoriamente para simular la imagen de referencia
+            if (seatNum === 105 || seatNum === 48) {
+              seat.classList.add('disabled');
+            } else {
+              seat.addEventListener('click', () => {
+                seat.classList.toggle('selected');
+              });
+            }
+            leftBlock.appendChild(seat);
+          });
+          rowDiv.appendChild(leftBlock);
+
+          const aisle = document.createElement('div');
+          aisle.className = 'aisle';
+          rowDiv.appendChild(aisle);
+
+          const rightBlock = document.createElement('div');
+          rightBlock.className = 'seats-block';
+          r.right.forEach(seatNum => {
+            const seat = document.createElement('button');
+            seat.className = 'seat';
+            seat.textContent = seatNum;
+            if (seatNum === 107 || seatNum === 63) {
+              seat.classList.add('disabled');
+            } else {
+              seat.addEventListener('click', () => {
+                seat.classList.toggle('selected');
+              });
+            }
+            rightBlock.appendChild(seat);
+          });
+          rowDiv.appendChild(rightBlock);
+
+          seatsContainer.appendChild(rowDiv);
+        });
+      }
 
       showBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
           const card = e.target.closest('.movie-card');
           const movieTitle = card.querySelector('.movie-title').textContent;
-          if (modalTitle) modalTitle.textContent = movieTitle;
+          if (modalTitle) modalTitle.textContent = `Seleccioná tu butaca - ${movieTitle}`;
+          renderSeats();
           if (modal) modal.classList.add('open');
         });
       });
@@ -398,11 +632,13 @@
         }
       });
 
-      document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('schedule-btn')) {
-          const time = e.target.textContent;
-          alert(`Has seleccionado la función de las ${time}. ¡Redirigiendo a selección de butacas!`);
-          if (modal) modal.classList.remove('open');
+      btnConfirmar.addEventListener('click', () => {
+        const selected = document.querySelectorAll('.seat.selected');
+        if (selected.length === 0) {
+          alert('Por favor selecciona al menos una butaca.');
+        } else {
+          alert(`¡Excelente! Has seleccionado ${selected.length} butaca(s). ¡Redirigiendo al pago!`);
+          modal.classList.remove('open');
         }
       });
     });
