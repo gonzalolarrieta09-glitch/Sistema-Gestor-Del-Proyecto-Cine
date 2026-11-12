@@ -39,4 +39,82 @@
   </section>
 
   <main class="container">
-    <h2 class="section-title">En Cartelera -
+    <h2 class="section-title">En Cartelera - INCAA</h2>
+
+    <div class="movies-grid">
+      <!-- Película 1: Puan -->
+      <article class="movie-card">
+        <img class="movie-poster" src="puan-front....jpg" alt="Puan">
+        <div class="movie-info">
+          <h3 class="movie-title">Puan</h3>
+          <p class="movie-meta">Comedia / Drama • 110 min</p>
+          <button class="movie-btn">Quiero ver esto</button>
+        </div>
+      </article>
+
+      <!-- Película 2: Argentina, 1985 -->
+      <article class="movie-card">
+        <img class="movie-poster" src="7b3713499.....jpg" alt="Argentina, 1985">
+        <div class="movie-info">
+          <h3 class="movie-title">Argentina, 1985</h3>
+          <p class="movie-meta">Drama / Histórica • 140 min</p>
+          <button class="movie-btn">Quiero ver esto</button>
+        </div>
+      </article>
+
+      <!-- Película 3: Trenque Lauquen -->
+      <article class="movie-card">
+        <img class="movie-poster" src="afiche-tren.....jpg" alt="Trenque Lauquen">
+        <div class="movie-info">
+          <h3 class="movie-title">Trenque Lauquen</h3>
+          <p class="movie-meta">Misterio / Romance • 260 min</p>
+          <button class="movie-btn">Quiero ver esto</button>
+        </div>
+      </article>
+
+      <!-- Película 4: Blondi -->
+      <article class="movie-card">
+        <img class="movie-poster" src="Blondi-2901.....jpg" alt="Blondi">
+        <div class="movie-info">
+          <h3 class="movie-title">Blondi</h3>
+          <p class="movie-meta">Comedia dramática • 87 min</p>
+          <button class="movie-btn">Quiero ver esto</button>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <!-- Modal de Selección de Butacas -->
+  <div class="modal" id="ticketModal">
+    <div class="modal-content">
+      <button class="modal-close">&times;</button>
+      <h3 class="modal-title" id="modalMovieTitle">Seleccioná tu butaca</h3>
+
+      <div class="screen-container">
+        <div class="screen-bar"></div>
+        <div class="screen-text">Pantalla</div>
+      </div>
+
+      <div class="seats-grid" id="seatsContainer"></div>
+
+      <div class="wheelchair-row">
+        <div class="wheelchair-icon">♿ Zona Accesible 14</div>
+      </div>
+
+      <div class="seat-legend">
+        <div class="legend-item"><div class="legend-dot" style="background: #fff;"></div> Disponible</div>
+        <div class="legend-item"><div class="legend-dot" style="background: #333;"></div> No disponible</div>
+        <div class="legend-item"><div class="legend-dot" style="background: #e50914;"></div> Seleccionado</div>
+      </div>
+
+      <button class="btn-confirmar" id="btnConfirmar">Confirmar Selección</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 CineNova. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
