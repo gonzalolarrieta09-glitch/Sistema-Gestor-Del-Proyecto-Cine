@@ -4,35 +4,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Botón / Enlace de Iniciar Sesión
   const btnLogin = document.getElementById('btnLogin');
-  btnLogin.addEventListener('click', () => {
-    if (!usuarioLogueado) {
-      const email = prompt("Ingresa tu correo electrónico para iniciar sesión en CineNova:");
-      if (email) {
-        usuarioLogueado = true;
-        btnLogin.textContent = "Mi Cuenta";
-        btnLogin.style.backgroundColor = "#28a745";
-        alert(`¡Bienvenido/a! Sesión iniciada correctamente.`);
+  if (btnLogin) {
+    btnLogin.addEventListener('click', () => {
+      if (!usuarioLogueado) {
+        const email = prompt("Ingresa tu correo electrónico para iniciar sesión en CineNova:");
+        if (email) {
+          usuarioLogueado = true;
+          btnLogin.textContent = "Mi Cuenta";
+          btnLogin.style.backgroundColor = "#28a745";
+          alert(`¡Bienvenido/a! Sesión iniciada correctamente.`);
+        }
+      } else {
+        if (confirm("¿Deseas cerrar sesión?")) {
+          usuarioLogueado = false;
+          btnLogin.textContent = "Iniciar Sesión";
+          btnLogin.style.backgroundColor = "#e50914";
+          alert("Sesión cerrada.");
+        }
       }
-    } else {
-      if (confirm("¿Deseas cerrar sesión?")) {
-        usuarioLogueado = false;
-        btnLogin.textContent = "Iniciar Sesión";
-        btnLogin.style.backgroundColor = "#e50914";
-        alert("Sesión cerrada.");
-      }
-    }
-  });
+    });
+  }
 
-  // Control de enlaces del menú que no tenían función asignada
-  document.getElementById('navEstrenos').addEventListener('click', (e) => {
-    e.preventDefault();
-    alert("Estrenos INCAA: Visualizando catálogo oficial actualizado de cine nacional.");
-  });
+  // Control de enlaces del menú
+  const navEstrenos = document.getElementById('navEstrenos');
+  if (navEstrenos) {
+    navEstrenos.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert("Estrenos INCAA: Visualizando catálogo oficial actualizado de cine nacional.");
+    });
+  }
 
-  document.getElementById('navPromos').addEventListener('click', (e) => {
-    e.preventDefault();
-    alert("Promociones vigentes: 2x1 con tarjetas adheridas y beneficios CineNova Club.");
-  });
+  const navPromos = document.getElementById('navPromos');
+  if (navPromos) {
+    navPromos.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert("Promociones vigentes: 2x1 con tarjetas adheridas y beneficios CineNova Club.");
+    });
+  }
 
   // Selector de días interactivo
   const dateBtns = document.querySelectorAll('.date-btn');
@@ -65,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   function renderSeats() {
+    if (!seatsContainer) return;
     seatsContainer.innerHTML = '';
     rowsData.forEach(r => {
       const rowDiv = document.createElement('div');
@@ -122,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', (e) => {
       if (!usuarioLogueado) {
         alert("⚠️ Debes iniciar sesión antes de seleccionar entradas y butacas.");
-        btnLogin.focus();
+        if (btnLogin) btnLogin.focus();
         return;
       }
 
@@ -134,25 +143,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  if (closeBtn) {
+  if (closeBtn && modal) {
     closeBtn.addEventListener('click', () => {
       modal.classList.remove('open');
     });
   }
 
   window.addEventListener('click', (e) => {
-    if (e.target === modal) {
+    if (modal && e.target === modal) {
       modal.classList.remove('open');
     }
   });
 
-  btnConfirmar.addEventListener('click', () => {
-    const selected = document.querySelectorAll('.seat.selected');
-    if (selected.length === 0) {
-      alert('Por favor selecciona al menos una butaca.');
-    } else {
-      alert(`¡Compra iniciada con éxito! Has seleccionado ${selected.length} butaca(s). Generando comprobante fiscal...`);
-      modal.classList.remove('open');
-    }
-  });
+  if (btnConfirmar && modal) {
+    btnConfirmar.addEventListener('click', () => {
+      const selected = document.querySelectorAll('.seat.selected');
+      if (selected.length === 0) {
+        alert('Por favor selecciona al menos una butaca.');
+      } else {
+        alert(`¡Compra iniciada con éxito! Has seleccionado ${selected.length} butaca(s). Generando comprobante fiscal...`);
+        modal.classList.remove('open');
+      }
+    });
+  }
 });
