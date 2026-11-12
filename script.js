@@ -1,24 +1,33 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Estado de autenticación simulado (false = no logueado, true = logueado)
-  let usuarioLogueado = false;
+  // Verificamos si hay sesión activa en localStorage
+  let usuarioActivo = localStorage.getItem('usuario_activo');
 
-  // Botón / Enlace de Iniciar Sesión
   const btnLogin = document.getElementById('btnLogin');
+  
+  function actualizarBotonLogin() {
+    if (btnLogin) {
+      if (usuarioActivo) {
+        btnLogin.textContent = "Mi Cuenta";
+        btnLogin.style.backgroundColor = "#28a745";
+      } else {
+        btnLogin.textContent = "Iniciar Sesión";
+        btnLogin.style.backgroundColor = "#e50914";
+      }
+    }
+  }
+
+  actualizarBotonLogin();
+
+  // Redirigir a la página de login al hacer clic en Iniciar Sesión
   if (btnLogin) {
     btnLogin.addEventListener('click', () => {
-      if (!usuarioLogueado) {
-        const email = prompt("Ingresa tu correo electrónico para iniciar sesión en CineNova:");
-        if (email) {
-          usuarioLogueado = true;
-          btnLogin.textContent = "Mi Cuenta";
-          btnLogin.style.backgroundColor = "#28a745";
-          alert(`¡Bienvenido/a! Sesión iniciada correctamente.`);
-        }
+      if (!usuarioActivo) {
+        window.location.href = 'login.html';
       } else {
-        if (confirm("¿Deseas cerrar sesión?")) {
-          usuarioLogueado = false;
-          btnLogin.textContent = "Iniciar Sesión";
-          btnLogin.style.backgroundColor = "#e50914";
+        if (confirm(`Sesión activa: ${usuarioActivo}\n¿Deseas cerrar sesión?`)) {
+          localStorage.removeItem('usuario_activo');
+          usuarioActivo = null;
+          actualizarBotonLogin();
           alert("Sesión cerrada.");
         }
       }
@@ -59,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const seatsContainer = document.getElementById('seatsContainer');
   const btnConfirmar = document.getElementById('btnConfirmar');
 
-  // Estructura de butacas (Filas 2 a 10 con pasillo central)
   const rowsData = [
     { row: 2, left: [214, 212, 210, 28, 26, 24, 22], right: [21, 23, 25, 27, 29, 211] },
     { row: 3, left: [314, 312, 310, 38, 36, 34, 32], right: [31, 33, 35, 37, 39, 311] },
@@ -126,12 +134,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // REGLA DE NEGOCIO: Obligar a iniciar sesión antes de elegir butacas
+  // REGLA DE NEGOCIO: Si no está logueado, redirige a login.html
   showBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
-      if (!usuarioLogueado) {
+      if (!usuarioActivo) {
         alert("⚠️ Debes iniciar sesión antes de seleccionar entradas y butacas.");
-        if (btnLogin) btnLogin.focus();
+        window.location.href = 'login.html';
         return;
       }
 
