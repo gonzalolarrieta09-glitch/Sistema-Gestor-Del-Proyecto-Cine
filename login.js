@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let isRegistering = false;
 
-  // Cambiar dinámicamente entre Iniciar Sesión y Registrarse
   toggleMode.addEventListener('click', (e) => {
     e.preventDefault();
     isRegistering = !isRegistering;
@@ -33,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Manejar el envío del formulario
   loginForm.addEventListener('submit', function(e) {
     e.preventDefault();
     errorMsg.style.display = 'none';
@@ -48,18 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMsg.style.display = 'block';
         return;
       }
-      // Guardar sesión y edad en el navegador
       const displayName = email.split('@')[0];
       localStorage.setItem('usuario_activo', displayName);
       localStorage.setItem('edad_usuario', ageValue);
       alert(`¡Cuenta creada con éxito! Bienvenido/a, ${displayName} (${ageValue} años)`);
     } else {
-      // Iniciar sesión normal
       const displayName = email.split('@')[0];
       localStorage.setItem('usuario_activo', displayName);
     }
 
-    // Redirigir de vuelta a la cartelera con ruta relativa segura
     window.location.href = './index.html';
   });
 });
