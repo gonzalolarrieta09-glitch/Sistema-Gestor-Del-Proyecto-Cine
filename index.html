@@ -5,6 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CineNova - Cartelera y Entradas</title>
   <link rel="stylesheet" href="./styles.css">
+  
+  <!-- ESTILOS AGREGADOS PARA LAS NUEVAS FUNCIONES -->
+  <style>
+    .promo-banner {
+      background: linear-gradient(90deg, #e50914, #ff4b2b);
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+      animation: aparecer 0.5s ease;
+    }
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .showtimes-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .time-btn {
+      background-color: #333;
+      color: white;
+      border: 1px solid #555;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    .time-btn:hover {
+      background-color: #e50914;
+      border-color: #e50914;
+    }
+  </style>
 </head>
 <body>
 
@@ -40,44 +80,48 @@
 
   <main class="container">
     <h2 class="section-title">En Cartelera - INCAA</h2>
+    
+    <!-- BANNER DE PROMOCIONES -->
+    <div id="promoBanner" class="promo-banner"></div>
+
     <div class="movies-grid">
       <!-- Película 1 -->
-      <article class="movie-card">
+      <article class="movie-card" data-title="Puan">
         <img class="movie-poster" src="puan-frontal-2.jpg" alt="Puan">
         <div class="movie-info">
           <h3 class="movie-title">Puan</h3>
           <p class="movie-meta">Comedia / Drama • 110 min</p>
-          <button class="movie-btn">Quiero ver esto</button>
+          <div class="showtimes-container"></div>
         </div>
       </article>
 
       <!-- Película 2 -->
-      <article class="movie-card">
+      <article class="movie-card" data-title="Argentina, 1985">
         <img class="movie-poster" src="7b371349946b8f9db09651bcdf78c6d16f7edddd03f3c18f26d5d6194f4c3859.jpg" alt="Argentina, 1985">
         <div class="movie-info">
           <h3 class="movie-title">Argentina, 1985</h3>
           <p class="movie-meta">Drama / Histórica • 140 min</p>
-          <button class="movie-btn">Quiero ver esto</button>
+          <div class="showtimes-container"></div>
         </div>
       </article>
 
       <!-- Película 3 -->
-      <article class="movie-card">
+      <article class="movie-card" data-title="Trenque Lauquen">
         <img class="movie-poster" src="afiche-trenque.jpg" alt="Trenque Lauquen">
         <div class="movie-info">
           <h3 class="movie-title">Trenque Lauquen</h3>
           <p class="movie-meta">Misterio / Romance • 260 min</p>
-          <button class="movie-btn">Quiero ver esto</button>
+          <div class="showtimes-container"></div>
         </div>
       </article>
 
       <!-- Película 4 -->
-      <article class="movie-card">
+      <article class="movie-card" data-title="Blondi">
         <img class="movie-poster" src="Blondi-290102419-large.jpg" alt="Blondi">
         <div class="movie-info">
           <h3 class="movie-title">Blondi</h3>
           <p class="movie-meta">Comedia dramática • 87 min</p>
-          <button class="movie-btn">Quiero ver esto</button>
+          <div class="showtimes-container"></div>
         </div>
       </article>
     </div>
@@ -109,37 +153,191 @@
     <p>© 2026 CineNova. Todos los derechos reservados.</p>
   </footer>
 
-  <!-- SCRIPT INTEGRADO PARA EVITAR ERRORES DE ARCHIVO -->
+  <!-- SCRIPT INTEGRADO Y ACTUALIZADO -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. CARGAR DÍAS DE LA SEMANA AUTOMÁTICAMENTE
+      
+      // CONFIGURACIÓN DE LA CARTELERA (Días y Horarios)
+      // Días: 0(Dom), 1(Lun), 2(Mar), 3(Mié), 4(Jue), 5(Vie), 6(Sáb)
+      const carteleraInfo = {
+        "Puan": { 
+          diasPermitidos: [0, 1, 2, 3, 4, 5, 6], 
+          horariosSemana: ["17:30", "20:00", "22:30"],
+          horariosFinde: ["15:00", "18:00", "21:00", "23:45"]
+        },
+        "Argentina, 1985": { 
+          diasPermitidos: [0, 4, 5, 6], 
+          horariosSemana: ["19:00"], 
+          horariosFinde: ["19:30", "22:45"] 
+        },
+        "Trenque Lauquen": { 
+          diasPermitidos: [0, 2, 4, 6], 
+          horariosSemana: ["16:00"],
+          horariosFinde: ["15:30"]
+        },
+        "Blondi": { 
+          diasPermitidos: [1, 2, 3], 
+          horariosSemana: ["18:15", "20:45"],
+          horariosFinde: []
+        }
+      };
+
+      let seleccionFinal = { pelicula: "", fecha: "", hora: "" };
+
+      // 1. CARGAR DÍAS DE LA SEMANA
       const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
       const mesesAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      const dateBtns = document.querySelectorAll('.date-btn');
 
       for (let i = 0; i < 7; i++) {
         const fecha = new Date();
         fecha.setDate(fecha.getDate() + i);
 
-        const nombreDia = diasSemana[fecha.getDay()];
-        const numeroDia = fecha.getDate();
-        const nombreMes = mesesAnio[fecha.getMonth()];
-
+        const numDiaSemana = fecha.getDay();
         const btn = document.getElementById('day-' + i);
+        
         if (btn) {
-          btn.textContent = nombreDia + ' ' + numeroDia + ' ' + nombreMes;
+          btn.textContent = diasSemana[numDiaSemana] + ' ' + fecha.getDate() + ' ' + mesesAnio[fecha.getMonth()];
+          btn.dataset.numeroDiaSemana = numDiaSemana;
+          btn.dataset.textoFecha = btn.textContent;
         }
       }
 
-      // Selector de días interactivo
-      const dateBtns = document.querySelectorAll('.date-btn');
+      // 2. FUNCIÓN PARA ACTUALIZAR PELÍCULAS SEGÚN EL DÍA
+      function actualizarCartelera(boton) {
+        dateBtns.forEach(b => b.classList.remove('active'));
+        boton.classList.add('active');
+
+        let numDia = parseInt(boton.dataset.numeroDiaSemana);
+        let esFinde = (numDia === 0 || numDia === 5 || numDia === 6);
+        
+        const promoBanner = document.getElementById('promoBanner');
+        if (numDia === 3) {
+          promoBanner.textContent = "🎟️ ¡Miércoles de Cine! 50% de descuento en todas las funciones.";
+          promoBanner.style.display = "block";
+        } else if (numDia === 2) {
+          promoBanner.textContent = "🍿 ¡Martes 2x1 en entradas comprando online!";
+          promoBanner.style.display = "block";
+        } else {
+          promoBanner.style.display = "none";
+        }
+
+        const peliculasDOM = document.querySelectorAll('.movie-card');
+        
+        peliculasDOM.forEach(card => {
+          let titulo = card.dataset.title;
+          let infoPeli = carteleraInfo[titulo];
+          let contenedorHorarios = card.querySelector('.showtimes-container');
+          
+          contenedorHorarios.innerHTML = '';
+
+          if (infoPeli.diasPermitidos.includes(numDia)) {
+            card.style.display = "flex"; 
+            
+            let horariosAMostrar = esFinde ? infoPeli.horariosFinde : infoPeli.horariosSemana;
+            
+            horariosAMostrar.forEach(hora => {
+              let btnHora = document.createElement('button');
+              btnHora.className = 'time-btn';
+              btnHora.textContent = hora;
+              
+              btnHora.addEventListener('click', () => {
+                prepararCompra(titulo, boton.dataset.textoFecha, hora);
+              });
+              
+              contenedorHorarios.appendChild(btnHora);
+            });
+          } else {
+            card.style.display = "none";
+          }
+        });
+      }
+
+      actualizarCartelera(document.getElementById('day-0'));
+
       dateBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          dateBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
+        btn.addEventListener('click', function() {
+          actualizarCartelera(this);
         });
       });
 
-      // 2. SISTEMA DE LOGIN
+      // 3. PREPARAR COMPRA Y ABRIR MODAL
+      const modal = document.getElementById('ticketModal');
+      const modalTitle = document.getElementById('modalMovieTitle');
+      const closeBtn = document.querySelector('.modal-close');
+
+      function prepararCompra(titulo, fecha, hora) {
+        if (!usuarioActivo) {
+          alert("⚠️ Debes iniciar sesión antes de seleccionar entradas.");
+          window.location.href = './login.html';
+          return;
+        }
+
+        seleccionFinal.pelicula = titulo;
+        seleccionFinal.fecha = fecha;
+        seleccionFinal.hora = hora;
+
+        modalTitle.textContent = `${titulo} - ${fecha} a las ${hora}hs`;
+        renderSeats();
+        modal.classList.add('open');
+      }
+
+      // 4. GENERAR ASIENTOS
+      const seatsContainer = document.getElementById('seatsContainer');
+      const rowsData = [
+        { row: 2, left: [214, 212, 210, 28, 26, 24, 22], right: [21, 23, 25, 27, 29, 211] },
+        { row: 3, left: [314, 312, 310, 38, 36, 34, 32], right: [31, 33, 35, 37, 39, 311] },
+        { row: 4, left: [414, 412, 410, 48, 46, 44, 42], right: [41, 43, 45, 47, 49, 411] },
+        { row: 5, left: [514, 512, 510, 58, 56, 54, 52], right: [51, 53, 55, 57, 59, 511] },
+        { row: 6, left: [614, 612, 610, 68, 66, 64, 62], right: [61, 63, 65, 67, 69, 611] }
+      ];
+
+      function renderSeats() {
+        if (!seatsContainer) return;
+        seatsContainer.innerHTML = '';
+        rowsData.forEach(r => {
+          const rowDiv = document.createElement('div');
+          rowDiv.className = 'seat-row';
+          
+          const leftBlock = document.createElement('div'); leftBlock.className = 'seats-block';
+          r.left.forEach(n => { let s = document.createElement('button'); s.className = 'seat'; s.textContent = n; s.addEventListener('click', () => s.classList.toggle('selected')); leftBlock.appendChild(s); });
+          rowDiv.appendChild(leftBlock);
+          
+          let aisle = document.createElement('div'); aisle.className = 'aisle'; rowDiv.appendChild(aisle);
+          
+          const rightBlock = document.createElement('div'); rightBlock.className = 'seats-block';
+          r.right.forEach(n => { let s = document.createElement('button'); s.className = 'seat'; s.textContent = n; s.addEventListener('click', () => s.classList.toggle('selected')); rightBlock.appendChild(s); });
+          rowDiv.appendChild(rightBlock);
+          
+          seatsContainer.appendChild(rowDiv);
+        });
+      }
+
+      if (closeBtn && modal) modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('open'); });
+      if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+
+      // 5. CONFIRMAR SELECCIÓN DE BUTACAS (TICKET DETALLADO)
+      const btnConfirmar = document.getElementById('btnConfirmar');
+      if (btnConfirmar) {
+        btnConfirmar.addEventListener('click', () => {
+          const selected = document.querySelectorAll('.seat.selected');
+          if (selected.length === 0) {
+            alert('Por favor selecciona al menos una butaca.');
+          } else {
+            let mensajeExito = `🎬 ¡COMPRA EXITOSA!\n\n`;
+            mensajeExito += `Película: ${seleccionFinal.pelicula}\n`;
+            mensajeExito += `Día: ${seleccionFinal.fecha}\n`;
+            mensajeExito += `Horario: ${seleccionFinal.hora}hs\n`;
+            mensajeExito += `Entradas: ${selected.length}\n\n`;
+            mensajeExito += `¡Te esperamos en CineNova! 🍿`;
+            
+            alert(mensajeExito);
+            modal.classList.remove('open');
+          }
+        });
+      }
+
+      // 6. SISTEMA DE LOGIN
       let usuarioActivo = localStorage.getItem('usuario_activo');
       const btnLogin = document.getElementById('btnLogin');
       
@@ -169,88 +367,6 @@
               alert("Sesión cerrada.");
             }
           }
-        });
-      }
-
-      // 3. MODAL Y BUTACAS
-      const modal = document.getElementById('ticketModal');
-      const modalTitle = document.getElementById('modalMovieTitle');
-      const closeBtn = document.querySelector('.modal-close');
-      const showBtns = document.querySelectorAll('.movie-btn');
-      const seatsContainer = document.getElementById('seatsContainer');
-      const btnConfirmar = document.getElementById('btnConfirmar');
-
-      const rowsData = [
-        { row: 2, left: [214, 212, 210, 28, 26, 24, 22], right: [21, 23, 25, 27, 29, 211] },
-        { row: 3, left: [314, 312, 310, 38, 36, 34, 32], right: [31, 33, 35, 37, 39, 311] },
-        { row: 4, left: [414, 412, 410, 48, 46, 44, 42], right: [41, 43, 45, 47, 49, 411] },
-        { row: 5, left: [514, 512, 510, 58, 56, 54, 52], right: [51, 53, 55, 57, 59, 511] },
-        { row: 6, left: [614, 612, 610, 68, 66, 64, 62], right: [61, 63, 65, 67, 69, 611] }
-      ];
-
-      function renderSeats() {
-        if (!seatsContainer) return;
-        seatsContainer.innerHTML = '';
-        rowsData.forEach(r => {
-          const rowDiv = document.createElement('div');
-          rowDiv.className = 'seat-row';
-          
-          const leftBlock = document.createElement('div');
-          leftBlock.className = 'seats-block';
-          r.left.forEach(seatNum => {
-            const seat = document.createElement('button');
-            seat.className = 'seat';
-            seat.textContent = seatNum;
-            seat.addEventListener('click', () => seat.classList.toggle('selected'));
-            leftBlock.appendChild(seat);
-          });
-          rowDiv.appendChild(leftBlock);
-
-          const aisle = document.createElement('div');
-          aisle.className = 'aisle';
-          rowDiv.appendChild(aisle);
-
-          const rightBlock = document.createElement('div');
-          rightBlock.className = 'seats-block';
-          r.right.forEach(seatNum => {
-            const seat = document.createElement('button');
-            seat.className = 'seat';
-            seat.textContent = seatNum;
-            seat.addEventListener('click', () => seat.classList.toggle('selected'));
-            rightBlock.appendChild(seat);
-          });
-          rowDiv.appendChild(rightBlock);
-
-          seatsContainer.appendChild(rowDiv);
-        });
-      }
-
-      showBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          if (!usuarioActivo) {
-            alert("⚠️ Debes iniciar sesión antes de seleccionar entradas y butacas.");
-            window.location.href = './login.html';
-            return;
-          }
-          const card = e.target.closest('.movie-card');
-          const movieTitle = card.querySelector('.movie-title').textContent;
-          const diaActivo = document.querySelector('.date-btn.active');
-          const fechaTexto = diaActivo ? diaActivo.textContent : '';
-
-          if (modalTitle) modalTitle.textContent = "Seleccioná tu butaca - " + movieTitle + " (" + fechaTexto + ")";
-          renderSeats();
-          if (modal) modal.classList.add('open');
-        });
-      });
-
-      if (closeBtn && modal) modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('open'); });
-      if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('open'));
-      
-      if (btnConfirmar) {
-        btnConfirmar.addEventListener('click', () => {
-          const selected = document.querySelectorAll('.seat.selected');
-          if (selected.length === 0) alert('Por favor selecciona al menos una butaca.');
-          else { alert("¡Compra exitosa! " + selected.length + " butaca(s)."); modal.classList.remove('open'); }
         });
       }
     });
