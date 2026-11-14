@@ -6,49 +6,51 @@
   <title>CineNova - Cuenta</title>
   <link rel="stylesheet" href="./styles.css">
 </head>
-<body style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: var(--bg-dark);">
+<body style="display: flex; justify-content: center; align-items: center; height: 100vh; background: radial-gradient(circle at center, #1b202d 0%, #0a0c10 100%); margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
 
-  <div style="width: 100%; max-width: 400px; padding: 2rem;">
-    <div class="modal-content" style="background-color: var(--bg-card); padding: 2.5rem; border-radius: 12px; border: 1px solid var(--accent-red); box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+  <div style="width: 100%; max-width: 420px; padding: 2rem;">
+    <!-- Tarjeta con degradado y brillo rojo más llamativo -->
+    <div class="modal-content" style="background: linear-gradient(145deg, #141824, #0b0e14); padding: 2.5rem; border-radius: 16px; border: 2px solid var(--accent-red); box-shadow: 0 0 25px rgba(229, 9, 20, 0.3), 0 15px 35px rgba(0,0,0,0.7);">
       
-      <div class="logo" style="text-align: center; margin-bottom: 1.5rem; font-size: 2rem;">
+      <div class="logo" style="text-align: center; margin-bottom: 1.5rem; font-size: 2.2rem; font-weight: 800; letter-spacing: 1px;">
         Cine<span>Nova</span>
       </div>
       
-      <h3 id="formTitle" class="modal-title" style="text-align: center; margin-bottom: 1.5rem; color: var(--text-main);">Iniciar Sesión</h3>
+      <h3 id="formTitle" class="modal-title" style="text-align: center; margin-bottom: 1.8rem; color: var(--text-main); font-size: 1.4rem; letter-spacing: 0.5px;">Iniciar Sesión</h3>
       
       <!-- Mensaje de alerta visual -->
-      <div id="errorMsg" style="display: none; background-color: rgba(229, 9, 20, 0.2); border: 1px solid var(--accent-red); color: #ff6b6b; padding: 0.7rem; border-radius: 6px; margin-bottom: 1rem; font-size: 0.85rem; text-align: center;"></div>
+      <div id="errorMsg" style="display: none; background-color: rgba(229, 9, 20, 0.2); border: 1px solid var(--accent-red); color: #ff6b6b; padding: 0.8rem; border-radius: 8px; margin-bottom: 1.2rem; font-size: 0.85rem; text-align: center; font-weight: 500;"></div>
 
       <form id="loginForm" style="display: flex; flex-direction: column; gap: 1.2rem;">
         
         <!-- Campo Edad (Solo visible al registrarse) -->
         <div id="ageFieldContainer" style="display: none;">
-          <label style="color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 0.4rem;">Edad</label>
-          <input type="number" id="userAge" placeholder="18" min="1" max="120" style="width: 100%; padding: 0.8rem; border-radius: 6px; border: 1px solid #2a2e39; background: #141721; color: #fff;">
+          <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Edad</label>
+          <input type="number" id="userAge" placeholder="18" min="1" max="120" style="width: 100%; padding: 0.9rem; border-radius: 8px; border: 1px solid #323846; background: #0e1118; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.3s;">
         </div>
 
         <div>
-          <label style="color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 0.4rem;">Correo electrónico</label>
-          <input type="email" id="loginEmail" placeholder="usuario@cinenova.com" required style="width: 100%; padding: 0.8rem; border-radius: 6px; border: 1px solid #2a2e39; background: #141721; color: #fff;">
+          <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Correo electrónico</label>
+          <input type="email" id="loginEmail" placeholder="usuario@cinenova.com" required style="width: 100%; padding: 0.9rem; border-radius: 8px; border: 1px solid #323846; background: #0e1118; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.3s;">
         </div>
         
         <div>
-          <label style="color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 0.4rem;">Contraseña</label>
-          <input type="password" id="loginPassword" placeholder="••••••••" required style="width: 100%; padding: 0.8rem; border-radius: 6px; border: 1px solid #2a2e39; background: #141721; color: #fff;">
+          <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Contraseña</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" required style="width: 100%; padding: 0.9rem; border-radius: 8px; border: 1px solid #323846; background: #0e1118; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.3s;">
         </div>
         
-        <button type="submit" id="btnSubmit" class="btn-confirmar" style="margin-top: 0.5rem; background-color: var(--accent-red); color: white; width: 100%; padding: 0.8rem; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; text-transform: uppercase;">Ingresar</button>
+        <!-- Botón con degradado rojo brillante y sombra -->
+        <button type="submit" id="btnSubmit" class="btn-confirmar" style="margin-top: 0.8rem; background: linear-gradient(135deg, #ff1e2b 0%, #c9020e 100%); color: white; width: 100%; padding: 0.95rem; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.95rem; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(229, 9, 20,.4); transition: transform 0.2s, box-shadow 0.2s;">Ingresar</button>
       </form>
 
       <!-- Alternar entre Login y Registro -->
-      <div id="toggleContainer" style="text-align: center; margin-top: 1.2rem; font-size: 0.85rem; color: var(--text-muted);">
+      <div id="toggleContainer" style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
         <span id="toggleText">¿No tienes cuenta?</span> 
-        <a href="#" id="toggleMode" style="color: var(--accent-gold); text-decoration: none; font-weight: 600; margin-left: 5px;">Regístrate aquí</a>
+        <a href="#" id="toggleMode" style="color: var(--accent-gold); text-decoration: none; font-weight: 600; margin-left: 5px; transition: opacity 0.2s;">Regístrate aquí</a>
       </div>
 
-      <div style="text-align: center; margin-top: 1rem; font-size: 0.85rem;">
-        <a href="./index.html" style="color: var(--accent-gold); text-decoration: none; font-weight: 600;">Volver a la cartelera</a>
+      <div style="text-align: center; margin-top: 1.2rem; font-size: 0.85rem; border-top: 1px solid #222734; padding-top: 1.2rem;">
+        <a href="./index.html" style="color: var(--accent-gold); text-decoration: none; font-weight: 600; letter-spacing: 0.5px;">Volver a la cartelera</a>
       </div>
 
     </div>
