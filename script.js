@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnLogin) {
     btnLogin.addEventListener('click', () => {
       if (!usuarioActivo) {
-        window.location.href = 'login.html';
+        window.location.href = './login.html';
       } else {
         if (confirm(`Sesión activa: ${usuarioActivo}\n¿Deseas cerrar sesión?`)) {
           localStorage.removeItem('usuario_activo');
@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', (e) => {
       if (!usuarioActivo) {
         alert("⚠️ Debes iniciar sesión antes de seleccionar entradas y butacas.");
-        window.location.href = 'login.html';
+        window.location.href = './login.html';
         return;
       }
 
@@ -173,5 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('open');
       }
     });
+  }
+});
   }
 });
