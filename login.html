@@ -58,12 +58,21 @@
 
           <div>
             <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Correo electrónico</label>
-            <input type="email" id="loginEmail" placeholder="usuario@cinenova.com" required style="width: 100%; padding: 0.9rem; border-radius: 8px; border: 1px solid #323846; background: #0e1118; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.3s;">
+            <input type="email" id="loginEmail" placeholder="usuario@cinenova.com" required style="width: 100%; padding: 0.9rem; border-radius: 8px; border: 1px solid #323846; background: #0e1118; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;">
           </div>
           
-          <div>
+          <!-- Contraseña con el botón del Ojo -->
+          <div style="position: relative;">
             <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Contraseña</label>
-            <input type="password" id="loginPassword" placeholder="••••••••" required style="width: 100%; padding: 0.9rem; border-radius: 8px; border: 1px solid #323846; background: #0e1118; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.3s;">
+            <input type="password" id="loginPassword" placeholder="••••••••" required style="width: 100%; padding: 0.9rem; padding-right: 2.8rem; border-radius: 8px; border: 1px solid #323846; background: #0e1118; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.3s; box-sizing: border-box;">
+            
+            <!-- Botón del Ojo -->
+            <button type="button" id="togglePassword" title="Mostrar/Ocultar contraseña" style="position: absolute; right: 12px; top: 38px; background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 0; display: flex; align-items: center; justify-content: center;">
+              <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
           </div>
           
           <!-- Botón con degradado rojo brillante y sombra -->
@@ -81,14 +90,14 @@
         </div>
       </div>
 
-      <!-- ================= CONTENEDOR 2: PERFIL / CERRAR SESIÓN (OCULTO SI NO HAY SESIÓN) ================= -->
+      <!-- ================= CONTENEDOR 2: PERFIL / CERRAR SESIÓN ================= -->
       <div id="profileContainer" style="display: none; text-align: center;">
         <h3 class="modal-title" style="color: var(--text-main); font-size: 1.4rem; margin-bottom: 1rem; letter-spacing: 0.5px;">Mi Cuenta Activa</h3>
         <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.3rem;">Sesión iniciada como:</p>
         <p id="profileUser" style="color: #fff; font-weight: bold; font-size: 1.1rem; margin-bottom: 0.6rem;"></p>
         <p id="profileBirthdate" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.8rem;"></p>
         
-        <!-- Botón de Cerrar Sesión con el mismo diseño llamativo -->
+        <!-- Botón de Cerrar Sesión con diseño llamativo -->
         <button id="btnLogout" style="background: linear-gradient(135deg, #ff1e2b 0%, #c9020e 100%); color: white; width: 100%; padding: 0.95rem; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.95rem; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(229, 9, 20,.4); margin-bottom: 1.2rem; transition: transform 0.2s;">Cerrar Sesión</button>
         
         <div style="border-top: 1px solid #222734; padding-top: 1.2rem;">
