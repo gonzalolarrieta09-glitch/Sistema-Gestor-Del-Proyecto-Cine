@@ -137,7 +137,7 @@
       </ul>
 
       <div class="coupon-box">
-        <p style="color: #bbb; margin-bottom: 10px;">¿Tenés suerte hoy? Generá tu código sorpresa para usar en boletería.</p>
+        <p style="color: #bbb; margin-bottom: 10px;">¿Tenés suerte hoy? Generá tu código sorpresa exclusivo para usuarios registrados.</p>
         <h4 id="couponResult" style="color: #e50914; margin: 10px 0; font-size: 1.5rem; letter-spacing: 2px;">---</h4>
         <button class="btn-coupon" id="btnGenerateCoupon">🎲 Generar Cupón Sorpresa</button>
       </div>
@@ -175,6 +175,9 @@
   <!-- SCRIPT INTEGRADO Y ACTUALIZADO -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      
+      // SISTEMA DE LOGIN INICIAL
+      let usuarioActivo = localStorage.getItem('usuario_activo');
       
       // CONFIGURACIÓN DE LA CARTELERA
       const carteleraInfo = {
@@ -280,7 +283,7 @@
       });
 
       // ==========================================
-      // FUNCIONALIDAD NUEVA: MODAL PROMOCIONES
+      // FUNCIONALIDAD: MODAL PROMOCIONES
       // ==========================================
       const navPromos = document.getElementById('navPromos');
       const promoModal = document.getElementById('promoModal');
@@ -296,13 +299,21 @@
       if (closePromo) closePromo.addEventListener('click', () => promoModal.classList.remove('open'));
       promoModal.addEventListener('click', (e) => { if(e.target === promoModal) promoModal.classList.remove('open'); });
 
-      // Generador de Cupón Sorpresa
+      // Generador de Cupón Sorpresa CON RESTRICCIÓN DE LOGIN
       const btnGenerateCoupon = document.getElementById('btnGenerateCoupon');
       const couponResult = document.getElementById('couponResult');
       const cupones = ['NOVA20', 'POCHOCLOSFREE', 'CINE50', 'VIPUPGRADE', 'SUPERNOVA10'];
       
       if(btnGenerateCoupon) {
         btnGenerateCoupon.addEventListener('click', () => {
+          
+          // Validación de inicio de sesión agregada aquí
+          if (!usuarioActivo) {
+            alert("⚠️ Debes iniciar sesión para poder generar y ver tu cupón sorpresa.");
+            window.location.href = './login.html';
+            return; // Detiene la ejecución para no mostrar el cupón
+          }
+
           let cuponAleatorio = cupones[Math.floor(Math.random() * cupones.length)];
           couponResult.textContent = cuponAleatorio;
           
@@ -414,8 +425,7 @@
         });
       }
 
-      // 6. SISTEMA DE LOGIN
-      let usuarioActivo = localStorage.getItem('usuario_activo');
+      // 6. SISTEMA DE BOTÓN DE LOGIN SUPERIOR
       const btnLogin = document.getElementById('btnLogin');
       
       function actualizarBotonLogin() {
@@ -448,7 +458,5 @@
       }
     });
   </script>
-</body>
-</html>
 </body>
 </html>
