@@ -2,7 +2,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Verificamos si hay sesión activa en localStorage
   let usuarioActivo = localStorage.getItem('usuario_activo');
 
-  const btnLogin = document.getElementById('btnLogin');
+  // Búsqueda inteligente: Intenta por ID y si no lo encuentra, busca por el texto del botón
+  let btnLogin = document.getElementById('btnLogin');
+  if (!btnLogin) {
+    const posiblesBotones = document.querySelectorAll('a, button');
+    posiblesBotones.forEach(el => {
+      const texto = el.textContent.trim().toLowerCase();
+      if (texto.includes('iniciar sesión') || texto.includes('mi cuenta')) {
+        btnLogin = el;
+      }
+    });
+  }
   
   function actualizarBotonLogin() {
     if (btnLogin) {
@@ -18,17 +28,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   actualizarBotonLogin();
 
-  // Redirigir a la página de login al hacer clic en Iniciar Sesión
+  // Redirigir a la página de login al hacer clic o cerrar sesión
   if (btnLogin) {
-    btnLogin.addEventListener('click', () => {
+    btnLogin.addEventListener('click', (e) => {
+      e.preventDefault(); // Evita comportamientos por defecto si es un enlace
       if (!usuarioActivo) {
         window.location.href = './login.html';
       } else {
         if (confirm(`Sesión activa: ${usuarioActivo}\n¿Deseas cerrar sesión?`)) {
           localStorage.removeItem('usuario_activo');
+          localStorage.removeItem('email_activo');
           usuarioActivo = null;
           actualizarBotonLogin();
           alert("Sesión cerrada.");
+          // Opcional: recargar la página para limpiar estados visuales
+          window.location.reload();
         }
       }
     });
@@ -173,7 +187,5 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('open');
       }
     });
-  }
-});
   }
 });
