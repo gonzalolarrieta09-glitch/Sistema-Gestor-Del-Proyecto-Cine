@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Verificamos si hay sesión activa en localStorage
   let usuarioActivo = localStorage.getItem('usuario_activo');
-
   const btnLogin = document.getElementById('btnLogin');
   
   function actualizarBotonLogin() {
@@ -51,21 +50,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Sincronizar el Reloj Mundial con los 7 botones estáticos de días
-  const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-  const mesesAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+  // ==========================================
+  // NUEVA FUNCIÓN PARA OBTENER LA FECHA
+  // ==========================================
+  function obtenerFechaEstructurada(diasAAgregar) {
+    const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const mesesAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
-  for (let i = 0; i < 7; i++) {
     const fecha = new Date();
-    fecha.setDate(fecha.getDate() + i);
+    fecha.setDate(fecha.getDate() + diasAAgregar);
 
-    const nombreDia = diasSemana[fecha.getDay()];
-    const numeroDia = fecha.getDate();
-    const nombreMes = mesesAnio[fecha.getMonth()];
+    return {
+      textoAmostrar: `${diasSemana[fecha.getDay()]} ${fecha.getDate()} ${mesesAnio[fecha.getMonth()]}`,
+      fechaValor: fecha.toISOString().split('T')[0] // Formato YYYY-MM-DD para usar luego en la compra
+    };
+  }
 
+  // Sincronizar el Reloj Mundial con los 7 botones estáticos de días usando la función
+  for (let i = 0; i < 7; i++) {
     const btn = document.getElementById(`day-${i}`);
     if (btn) {
-      btn.textContent = `${nombreDia} ${numeroDia} ${nombreMes}`;
+      const datosFecha = obtenerFechaEstructurada(i);
+      btn.textContent = datosFecha.textoAmostrar;
+      btn.dataset.fecha = datosFecha.fechaValor; // Guardamos el valor exacto en el HTML
     }
   }
 
@@ -73,8 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const dateBtns = document.querySelectorAll('.date-btn');
   dateBtns.forEach(btn => {
     btn.addEventListener('click', () => {
+      // Remover clase activa de todos y agregar al clickeado
       dateBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      
+      // Opcional: ver en consola la fecha seleccionada
+      console.log("Día seleccionado para la función:", btn.dataset.fecha);
     });
   });
 
@@ -163,7 +174,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const card = e.target.closest('.movie-card');
       const movieTitle = card.querySelector('.movie-title').textContent;
-      if (modalTitle) modalTitle.textContent = `Seleccioná tu butaca - ${movieTitle}`;
+      
+      // Capturamos el día que esté marcado como activo en ese momento
+      const diaActivo = document.querySelector('.date-btn.active');
+      const fechaSeleccionada = diaActivo ? diaActivo.dataset.fecha : 'Fecha sin seleccionar';
+
+      if (modalTitle) modalTitle.textContent = `Seleccioná tu butaca - ${movieTitle} (${fechaSeleccionada})`;
       renderSeats();
       if (modal) modal.classList.add('open');
     });
