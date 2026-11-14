@@ -5,6 +5,6 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
   // Guardamos la sesión activa en el navegador
   localStorage.setItem('usuario_activo', email);
   
-  // Redirigimos de vuelta a la cartelera
-  window.location.href = 'index.html';
+  // Redirigimos de vuelta a la cartelera con ruta relativa segura
+  window.location.href = './index.html';
 });
