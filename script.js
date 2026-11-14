@@ -51,33 +51,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Selector de días dinámico conectado al reloj del sistema
-  const dateContainer = document.getElementById('dateSelectorContainer');
-  if (dateContainer) {
-    dateContainer.innerHTML = '';
-    const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-    const mesesAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+  // Sincronizar el Reloj Mundial con los 7 botones estáticos de días
+  const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  const mesesAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
-    for (let i = 0; i < 7; i++) {
-      const fecha = new Date();
-      fecha.setDate(fecha.getDate() + i);
+  for (let i = 0; i < 7; i++) {
+    const fecha = new Date();
+    fecha.setDate(fecha.getDate() + i);
 
-      const nombreDia = diasSemana[fecha.getDay()];
-      const numeroDia = fecha.getDate();
-      const nombreMes = mesesAnio[fecha.getMonth()];
+    const nombreDia = diasSemana[fecha.getDay()];
+    const numeroDia = fecha.getDate();
+    const nombreMes = mesesAnio[fecha.getMonth()];
 
-      const btn = document.createElement('button');
-      btn.className = `date-btn ${i === 0 ? 'active' : ''}`;
+    const btn = document.getElementById(`day-${i}`);
+    if (btn) {
       btn.textContent = `${nombreDia} ${numeroDia} ${nombreMes}`;
-      
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-
-      dateContainer.appendChild(btn);
     }
   }
+
+  // Selector de días interactivo
+  const dateBtns = document.querySelectorAll('.date-btn');
+  dateBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      dateBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
 
   // Modal y Butacas
   const modal = document.getElementById('ticketModal');
@@ -192,5 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('open');
       }
     });
+  }
+});
   }
 });
