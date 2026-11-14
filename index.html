@@ -8,6 +8,7 @@
   
   <!-- ESTILOS AGREGADOS PARA LAS NUEVAS FUNCIONES -->
   <style>
+    /* Banner de Promos en cartelera */
     .promo-banner {
       background: linear-gradient(90deg, #e50914, #ff4b2b);
       color: white;
@@ -24,26 +25,22 @@
       from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .showtimes-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 15px;
-    }
-    .time-btn {
-      background-color: #333;
-      color: white;
-      border: 1px solid #555;
-      padding: 8px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.3s;
-    }
-    .time-btn:hover {
-      background-color: #e50914;
-      border-color: #e50914;
-    }
+    
+    /* Botones de Horarios */
+    .showtimes-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+    .time-btn { background-color: #333; color: white; border: 1px solid #555; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
+    .time-btn:hover { background-color: #e50914; border-color: #e50914; }
+
+    /* ESTILOS NUEVOS: Modal de Promociones */
+    .promo-list { list-style: none; padding: 0; margin-bottom: 20px; text-align: left; }
+    .promo-list li { background: #222; margin: 10px 0; padding: 15px; border-left: 4px solid #e50914; border-radius: 4px; color: #ddd; }
+    .promo-list li strong { color: #fff; }
+    
+    .coupon-box { background: #111; border: 1px dashed #e50914; padding: 15px; text-align: center; margin-bottom: 20px; border-radius: 4px; }
+    .btn-coupon, .btn-ahorro { background: #e50914; color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; border-radius: 4px; width: 100%; margin-top: 10px; transition: 0.3s; font-size: 1rem; }
+    .btn-ahorro { background: #28a745; margin-top: 0; }
+    .btn-coupon:hover { background: #b0060e; }
+    .btn-ahorro:hover { background: #1e7e34; }
   </style>
 </head>
 <body>
@@ -127,10 +124,32 @@
     </div>
   </main>
 
+  <!-- NUEVO: MODAL DE PROMOCIONES Y CUPONES -->
+  <div class="modal" id="promoModal">
+    <div class="modal-content" style="max-width: 500px;">
+      <button class="modal-close" id="closePromo">×</button>
+      <h3 class="modal-title">Promociones y Beneficios</h3>
+      
+      <ul class="promo-list">
+        <li><strong>🍿 2x1 los Martes:</strong> Comprando entradas online.</li>
+        <li><strong>🎟️ 50% OFF Miércoles:</strong> A mitad de precio en todas las funciones.</li>
+        <li><strong>💳 Tarjeta Nova:</strong> 20% de descuento de Jueves a Domingo.</li>
+      </ul>
+
+      <div class="coupon-box">
+        <p style="color: #bbb; margin-bottom: 10px;">¿Tenés suerte hoy? Generá tu código sorpresa para usar en boletería.</p>
+        <h4 id="couponResult" style="color: #e50914; margin: 10px 0; font-size: 1.5rem; letter-spacing: 2px;">---</h4>
+        <button class="btn-coupon" id="btnGenerateCoupon">🎲 Generar Cupón Sorpresa</button>
+      </div>
+
+      <button class="btn-ahorro" id="btnModoAhorro">💸 Activar "Modo Ahorro" en Cartelera</button>
+    </div>
+  </div>
+
   <!-- Modal de Selección de Butacas -->
   <div class="modal" id="ticketModal">
     <div class="modal-content">
-      <button class="modal-close">×</button>
+      <button class="modal-close" id="closeTicket">×</button>
       <h3 class="modal-title" id="modalMovieTitle">Seleccioná tu butaca</h3>
       <div class="screen-container">
         <div class="screen-bar"></div>
@@ -157,8 +176,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       
-      // CONFIGURACIÓN DE LA CARTELERA (Días y Horarios)
-      // Días: 0(Dom), 1(Lun), 2(Mar), 3(Mié), 4(Jue), 5(Vie), 6(Sáb)
+      // CONFIGURACIÓN DE LA CARTELERA
       const carteleraInfo = {
         "Puan": { 
           diasPermitidos: [0, 1, 2, 3, 4, 5, 6], 
@@ -261,10 +279,68 @@
         });
       });
 
-      // 3. PREPARAR COMPRA Y ABRIR MODAL
-      const modal = document.getElementById('ticketModal');
+      // ==========================================
+      // FUNCIONALIDAD NUEVA: MODAL PROMOCIONES
+      // ==========================================
+      const navPromos = document.getElementById('navPromos');
+      const promoModal = document.getElementById('promoModal');
+      const closePromo = document.getElementById('closePromo');
+
+      // Abrir modal
+      if (navPromos) navPromos.addEventListener('click', (e) => { 
+        e.preventDefault(); 
+        promoModal.classList.add('open'); 
+      });
+      
+      // Cerrar modal
+      if (closePromo) closePromo.addEventListener('click', () => promoModal.classList.remove('open'));
+      promoModal.addEventListener('click', (e) => { if(e.target === promoModal) promoModal.classList.remove('open'); });
+
+      // Generador de Cupón Sorpresa
+      const btnGenerateCoupon = document.getElementById('btnGenerateCoupon');
+      const couponResult = document.getElementById('couponResult');
+      const cupones = ['NOVA20', 'POCHOCLOSFREE', 'CINE50', 'VIPUPGRADE', 'SUPERNOVA10'];
+      
+      if(btnGenerateCoupon) {
+        btnGenerateCoupon.addEventListener('click', () => {
+          let cuponAleatorio = cupones[Math.floor(Math.random() * cupones.length)];
+          couponResult.textContent = cuponAleatorio;
+          
+          navigator.clipboard.writeText(cuponAleatorio).then(() => {
+            alert(`¡Felicidades! Tu código ${cuponAleatorio} se copió al portapapeles. ¡Mostralo en la boletería!`);
+          });
+
+          btnGenerateCoupon.textContent = "Cupón Generado ✔️";
+          btnGenerateCoupon.style.backgroundColor = "#28a745";
+          btnGenerateCoupon.disabled = true;
+        });
+      }
+
+      // Activar "Modo Ahorro"
+      const btnModoAhorro = document.getElementById('btnModoAhorro');
+      if(btnModoAhorro) {
+        btnModoAhorro.addEventListener('click', () => {
+          const dateBtnsArray = Array.from(document.querySelectorAll('.date-btn'));
+          const diaAhorro = dateBtnsArray.find(btn => {
+            let numDia = btn.dataset.numeroDiaSemana;
+            return numDia == "2" || numDia == "3"; // Busca el primer Martes o Miércoles
+          });
+
+          if(diaAhorro) {
+            diaAhorro.click(); 
+            promoModal.classList.remove('open'); 
+            document.querySelector('.movies-grid').scrollIntoView({ behavior: 'smooth' }); 
+          } else {
+            alert("En los próximos 7 días no tenemos promociones programadas.");
+          }
+        });
+      }
+
+
+      // 3. PREPARAR COMPRA Y ABRIR MODAL TICKETS
+      const ticketModal = document.getElementById('ticketModal');
       const modalTitle = document.getElementById('modalMovieTitle');
-      const closeBtn = document.querySelector('.modal-close');
+      const closeTicket = document.getElementById('closeTicket');
 
       function prepararCompra(titulo, fecha, hora) {
         if (!usuarioActivo) {
@@ -279,7 +355,7 @@
 
         modalTitle.textContent = `${titulo} - ${fecha} a las ${hora}hs`;
         renderSeats();
-        modal.classList.add('open');
+        ticketModal.classList.add('open');
       }
 
       // 4. GENERAR ASIENTOS
@@ -313,8 +389,9 @@
         });
       }
 
-      if (closeBtn && modal) modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('open'); });
-      if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+      // Cierre del modal de tickets
+      if (closeTicket) closeTicket.addEventListener('click', () => ticketModal.classList.remove('open'));
+      ticketModal.addEventListener('click', (e) => { if(e.target === ticketModal) ticketModal.classList.remove('open'); });
 
       // 5. CONFIRMAR SELECCIÓN DE BUTACAS (TICKET DETALLADO)
       const btnConfirmar = document.getElementById('btnConfirmar');
@@ -332,7 +409,7 @@
             mensajeExito += `¡Te esperamos en CineNova! 🍿`;
             
             alert(mensajeExito);
-            modal.classList.remove('open');
+            ticketModal.classList.remove('open');
           }
         });
       }
@@ -371,5 +448,7 @@
       }
     });
   </script>
+</body>
+</html>
 </body>
 </html>
