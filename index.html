@@ -21,16 +21,8 @@
     <button class="btn-login" id="btnLogin" onclick="const activo = localStorage.getItem('usuario_activo'); if(!activo) { window.location.href = './login.html'; }">Iniciar Sesión</button>
   </header>
 
-  <!-- Selector de Días -->
-  <div class="date-selector-container">
-    <button class="date-btn active">Miércoles 11 Nov</button>
-    <button class="date-btn">Jueves 12 Nov</button>
-    <button class="date-btn">Viernes 13 Nov</button>
-    <button class="date-btn">Sábado 14 Nov</button>
-    <button class="date-btn">Domingo 15 Nov</button>
-    <button class="date-btn">Lunes 16 Nov</button>
-    <button class="date-btn">Martes 17 Nov</button>
-  </div>
+  <!-- Selector de Días Dinámico -->
+  <div class="date-selector-container" id="dateSelectorContainer"></div>
 
   <section class="hero">
     <div class="hero-content">
