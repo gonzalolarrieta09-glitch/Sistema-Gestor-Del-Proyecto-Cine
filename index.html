@@ -41,6 +41,45 @@
     .btn-ahorro { background: #28a745; margin-top: 0; }
     .btn-coupon:hover { background: #b0060e; }
     .btn-ahorro:hover { background: #1e7e34; }
+
+    /* ESTILOS NUEVOS: Diseño del Comprobante de Venta y Tipo de Entrada */
+    .receipt-content {
+      background: #fdfdfd;
+      color: #111;
+      font-family: 'Courier New', Courier, monospace;
+      max-width: 400px;
+      padding: 25px;
+      border: 1px solid #ccc;
+      box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
+    }
+    .receipt-header {
+      text-align: center;
+      border-bottom: 2px dashed #666;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+    }
+    .receipt-header h3 { margin: 0; color: #000; font-size: 1.5rem; }
+    .receipt-header p { margin: 5px 0 0 0; font-size: 0.9rem; color: #555; }
+    .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+    .receipt-divider { border-top: 1px dashed #666; margin: 15px 0; }
+    .receipt-total { font-size: 1.3rem; font-weight: bold; text-align: right; margin-top: 10px; }
+    
+    .ticket-type-container {
+      margin: 20px 0;
+      text-align: center;
+      background: #222;
+      padding: 15px;
+      border-radius: 8px;
+    }
+    .ticket-type-container select {
+      background: #111;
+      color: white;
+      padding: 8px 15px;
+      border: 1px solid #555;
+      border-radius: 4px;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
   </style>
 </head>
 <body>
@@ -124,7 +163,7 @@
     </div>
   </main>
 
-  <!-- NUEVO: MODAL DE PROMOCIONES Y CUPONES -->
+  <!-- MODAL DE PROMOCIONES Y CUPONES -->
   <div class="modal" id="promoModal">
     <div class="modal-content" style="max-width: 500px;">
       <button class="modal-close" id="closePromo">×</button>
@@ -164,7 +203,48 @@
         <div class="legend-item"><div class="legend-dot" style="background: #333;"></div> No disponible</div>
         <div class="legend-item"><div class="legend-dot" style="background: #e50914;"></div> Seleccionado</div>
       </div>
-      <button class="btn-confirmar" id="btnConfirmar">Confirmar Selección</button>
+
+      <!-- NUEVO: Selector de Tipo de Entrada -->
+      <div class="ticket-type-container">
+        <label for="tipoEntrada"><strong>Tipo de Entrada:</strong></label>
+        <select id="tipoEntrada">
+          <option value="mayor">General / Mayor ($6.000)</option>
+          <option value="menor">Menor de 12 años ($4.500)</option>
+          <option value="jubilado">Jubilado ($3.000)</option>
+        </select>
+      </div>
+
+      <button class="btn-confirmar" id="btnConfirmar">Confirmar Selección y Comprar</button>
+    </div>
+  </div>
+
+  <!-- NUEVO: Modal del Comprobante de Venta (Ticket) -->
+  <div class="modal" id="receiptModal">
+    <div class="modal-content receipt-content">
+      <div class="receipt-header">
+        <h3>COMPROBANTE DE VENTA</h3>
+        <p>CineNova S.A. - CUIT 30-12345678-9</p>
+      </div>
+      
+      <div class="receipt-row"><span>Operación #:</span> <strong id="recVenta"></strong></div>
+      <div class="receipt-row"><span>Función #:</span> <strong id="recFuncion"></strong></div>
+      <div class="receipt-row"><span>Fecha:</span> <strong id="recFecha"></strong></div>
+      
+      <div class="receipt-divider"></div>
+      
+      <div class="receipt-row"><span>Película:</span> <strong id="recPeli"></strong></div>
+      <div class="receipt-row"><span>Clasif. (Ley 17.741):</span> <strong id="recClasif"></strong></div>
+      <div class="receipt-row"><span>Sala:</span> <strong id="recSala"></strong></div>
+      <div class="receipt-row"><span>Butacas:</span> <strong id="recButacas"></strong></div>
+      
+      <div class="receipt-divider"></div>
+      
+      <div class="receipt-row"><span>Tipo de Ticket:</span> <strong id="recTipo"></strong></div>
+      <div class="receipt-row"><span>Cant. Entradas:</span> <strong id="recCant"></strong></div>
+      
+      <div class="receipt-total">TOTAL: $<span id="recTotal"></span></div>
+      
+      <button class="btn-ahorro" id="btnCerrarRecibo" style="margin-top: 25px; width: 100%;">Imprimir y Cerrar</button>
     </div>
   </div>
 
@@ -179,28 +259,49 @@
       // SISTEMA DE LOGIN INICIAL
       let usuarioActivo = localStorage.getItem('usuario_activo');
       
-      // CONFIGURACIÓN DE LA CARTELERA
+      // CONFIGURACIÓN DE LA CARTELERA (Actualizado con INCAA y Salas)
       const carteleraInfo = {
         "Puan": { 
           diasPermitidos: [0, 1, 2, 3, 4, 5, 6], 
           horariosSemana: ["17:30", "20:00", "22:30"],
-          horariosFinde: ["15:00", "18:00", "21:00", "23:45"]
+          horariosFinde: ["15:00", "18:00", "21:00", "23:45"],
+          sala: "Sala 1 (INCAA)",
+          clasificacion: "ATP"
         },
         "Argentina, 1985": { 
           diasPermitidos: [0, 4, 5, 6], 
           horariosSemana: ["19:00"], 
-          horariosFinde: ["19:30", "22:45"] 
+          horariosFinde: ["19:30", "22:45"],
+          sala: "Sala 2 (Atmos)",
+          clasificacion: "SAM 13"
         },
         "Trenque Lauquen": { 
           diasPermitidos: [0, 2, 4, 6], 
           horariosSemana: ["16:00"],
-          horariosFinde: ["15:30"]
+          horariosFinde: ["15:30"],
+          sala: "Sala 1 (INCAA)",
+          clasificacion: "SAM 13"
         },
         "Blondi": { 
           diasPermitidos: [1, 2, 3], 
           horariosSemana: ["18:15", "20:45"],
-          horariosFinde: []
+          horariosFinde: [],
+          sala: "Sala 3",
+          clasificacion: "SAM 16"
         }
+      };
+
+      // Precios de Entradas
+      const preciosEntradas = {
+        "mayor": 6000,
+        "menor": 4500,
+        "jubilado": 3000
+      };
+
+      const nombresEntradas = {
+        "mayor": "General / Mayor",
+        "menor": "Menor (hasta 12a)",
+        "jubilado": "Jubilado"
       };
 
       let seleccionFinal = { pelicula: "", fecha: "", hora: "" };
@@ -289,13 +390,11 @@
       const promoModal = document.getElementById('promoModal');
       const closePromo = document.getElementById('closePromo');
 
-      // Abrir modal
       if (navPromos) navPromos.addEventListener('click', (e) => { 
         e.preventDefault(); 
         promoModal.classList.add('open'); 
       });
       
-      // Cerrar modal
       if (closePromo) closePromo.addEventListener('click', () => promoModal.classList.remove('open'));
       promoModal.addEventListener('click', (e) => { if(e.target === promoModal) promoModal.classList.remove('open'); });
 
@@ -307,11 +406,10 @@
       if(btnGenerateCoupon) {
         btnGenerateCoupon.addEventListener('click', () => {
           
-          // Validación de inicio de sesión agregada aquí
           if (!usuarioActivo) {
             alert("⚠️ Debes iniciar sesión para poder generar y ver tu cupón sorpresa.");
             window.location.href = './login.html';
-            return; // Detiene la ejecución para no mostrar el cupón
+            return; 
           }
 
           let cuponAleatorio = cupones[Math.floor(Math.random() * cupones.length)];
@@ -327,14 +425,13 @@
         });
       }
 
-      // Activar "Modo Ahorro"
       const btnModoAhorro = document.getElementById('btnModoAhorro');
       if(btnModoAhorro) {
         btnModoAhorro.addEventListener('click', () => {
           const dateBtnsArray = Array.from(document.querySelectorAll('.date-btn'));
           const diaAhorro = dateBtnsArray.find(btn => {
             let numDia = btn.dataset.numeroDiaSemana;
-            return numDia == "2" || numDia == "3"; // Busca el primer Martes o Miércoles
+            return numDia == "2" || numDia == "3"; 
           });
 
           if(diaAhorro) {
@@ -400,28 +497,61 @@
         });
       }
 
-      // Cierre del modal de tickets
       if (closeTicket) closeTicket.addEventListener('click', () => ticketModal.classList.remove('open'));
       ticketModal.addEventListener('click', (e) => { if(e.target === ticketModal) ticketModal.classList.remove('open'); });
 
-      // 5. CONFIRMAR SELECCIÓN DE BUTACAS (TICKET DETALLADO)
+      // 5. CONFIRMAR COMPRA Y GENERAR COMPROBANTE DE VENTA
       const btnConfirmar = document.getElementById('btnConfirmar');
+      const receiptModal = document.getElementById('receiptModal');
+      const btnCerrarRecibo = document.getElementById('btnCerrarRecibo');
+
       if (btnConfirmar) {
         btnConfirmar.addEventListener('click', () => {
           const selected = document.querySelectorAll('.seat.selected');
+          
           if (selected.length === 0) {
-            alert('Por favor selecciona al menos una butaca.');
-          } else {
-            let mensajeExito = `🎬 ¡COMPRA EXITOSA!\n\n`;
-            mensajeExito += `Película: ${seleccionFinal.pelicula}\n`;
-            mensajeExito += `Día: ${seleccionFinal.fecha}\n`;
-            mensajeExito += `Horario: ${seleccionFinal.hora}hs\n`;
-            mensajeExito += `Entradas: ${selected.length}\n\n`;
-            mensajeExito += `¡Te esperamos en CineNova! 🍿`;
-            
-            alert(mensajeExito);
-            ticketModal.classList.remove('open');
+            alert('Por favor seleccioná al menos una butaca haciendo clic en ella.');
+            return;
           }
+
+          // Variables aleatorias del ticket
+          const numVenta = Math.floor(Math.random() * 90000000) + 10000000;
+          const numFuncion = Math.floor(Math.random() * 9000) + 1000;
+          const peliData = carteleraInfo[seleccionFinal.pelicula];
+          
+          // Cálculos de Precios
+          const tipoSeleccionado = document.getElementById('tipoEntrada').value;
+          const precioUnitario = preciosEntradas[tipoSeleccionado];
+          const cantidadEntradas = selected.length;
+          const precioTotal = precioUnitario * cantidadEntradas;
+          
+          // Identificadores de butacas
+          let butacasIds = [];
+          selected.forEach(s => butacasIds.push(s.textContent));
+
+          // Rellenar visualmente el Comprobante
+          document.getElementById('recVenta').textContent = numVenta;
+          document.getElementById('recFuncion').textContent = numFuncion;
+          document.getElementById('recFecha').textContent = `${seleccionFinal.fecha} - ${seleccionFinal.hora}hs`;
+          document.getElementById('recPeli').textContent = seleccionFinal.pelicula;
+          document.getElementById('recClasif').textContent = peliData.clasificacion;
+          document.getElementById('recSala').textContent = peliData.sala;
+          document.getElementById('recButacas').textContent = butacasIds.join(', ');
+          document.getElementById('recTipo').textContent = nombresEntradas[tipoSeleccionado];
+          document.getElementById('recCant').textContent = cantidadEntradas;
+          document.getElementById('recTotal').textContent = precioTotal.toLocaleString('es-AR');
+
+          // Cierra ventana de butacas y Abre Comprobante
+          ticketModal.classList.remove('open');
+          receiptModal.classList.add('open');
+        });
+      }
+
+      // Cerrar el Comprobante de venta
+      if (btnCerrarRecibo) {
+        btnCerrarRecibo.addEventListener('click', () => {
+          receiptModal.classList.remove('open');
+          alert("El comprobante se ha guardado en tu cuenta y enviado a tu correo registrado.");
         });
       }
 
