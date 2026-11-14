@@ -17,11 +17,10 @@
         <li><a href="#" id="navPromos">Promociones</a></li>
       </ul>
     </nav>
-    <!-- Botón de inicio de sesión con respaldo de seguridad -->
-    <button class="btn-login" id="btnLogin" onclick="const activo = localStorage.getItem('usuario_activo'); if(!activo) { window.location.href = './login.html'; }">Iniciar Sesión</button>
+    <button class="btn-login" id="btnLogin">Iniciar Sesión</button>
   </header>
 
-  <!-- Selector de Días con Botones Estáticos (Actualizados por el reloj mundial) -->
+  <!-- Selector de Días -->
   <div class="date-selector-container">
     <button class="date-btn active" id="day-0">Cargando...</button>
     <button class="date-btn" id="day-1">Cargando...</button>
@@ -41,9 +40,8 @@
 
   <main class="container">
     <h2 class="section-title">En Cartelera - INCAA</h2>
-
     <div class="movies-grid">
-      <!-- Película 1: Puan -->
+      <!-- Película 1 -->
       <article class="movie-card">
         <img class="movie-poster" src="puan-frontal-2.jpg" alt="Puan">
         <div class="movie-info">
@@ -53,7 +51,7 @@
         </div>
       </article>
 
-      <!-- Película 2: Argentina, 1985 -->
+      <!-- Película 2 -->
       <article class="movie-card">
         <img class="movie-poster" src="7b371349946b8f9db09651bcdf78c6d16f7edddd03f3c18f26d5d6194f4c3859.jpg" alt="Argentina, 1985">
         <div class="movie-info">
@@ -63,7 +61,7 @@
         </div>
       </article>
 
-      <!-- Película 3: Trenque Lauquen -->
+      <!-- Película 3 -->
       <article class="movie-card">
         <img class="movie-poster" src="afiche-trenque.jpg" alt="Trenque Lauquen">
         <div class="movie-info">
@@ -73,7 +71,7 @@
         </div>
       </article>
 
-      <!-- Película 4: Blondi -->
+      <!-- Película 4 -->
       <article class="movie-card">
         <img class="movie-poster" src="Blondi-290102419-large.jpg" alt="Blondi">
         <div class="movie-info">
@@ -88,34 +86,174 @@
   <!-- Modal de Selección de Butacas -->
   <div class="modal" id="ticketModal">
     <div class="modal-content">
-      <button class="modal-close">&times;</button>
+      <button class="modal-close">×</button>
       <h3 class="modal-title" id="modalMovieTitle">Seleccioná tu butaca</h3>
-
       <div class="screen-container">
         <div class="screen-bar"></div>
         <div class="screen-text">Pantalla</div>
       </div>
-
       <div class="seats-grid" id="seatsContainer"></div>
-
       <div class="wheelchair-row">
         <div class="wheelchair-icon">♿ Zona Accesible 14</div>
       </div>
-
       <div class="seat-legend">
         <div class="legend-item"><div class="legend-dot" style="background: #fff;"></div> Disponible</div>
         <div class="legend-item"><div class="legend-dot" style="background: #333;"></div> No disponible</div>
         <div class="legend-item"><div class="legend-dot" style="background: #e50914;"></div> Seleccionado</div>
       </div>
-
       <button class="btn-confirmar" id="btnConfirmar">Confirmar Selección</button>
     </div>
   </div>
 
   <footer>
-    <p>&copy; 2026 CineNova. Todos los derechos reservados.</p>
+    <p>© 2026 CineNova. Todos los derechos reservados.</p>
   </footer>
 
-  <script src="./script.js"></script>
+  <!-- SCRIPT INTEGRADO PARA EVITAR ERRORES DE ARCHIVO -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. CARGAR DÍAS DE LA SEMANA AUTOMÁTICAMENTE
+      const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+      const mesesAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+      for (let i = 0; i < 7; i++) {
+        const fecha = new Date();
+        fecha.setDate(fecha.getDate() + i);
+
+        const nombreDia = diasSemana[fecha.getDay()];
+        const numeroDia = fecha.getDate();
+        const nombreMes = mesesAnio[fecha.getMonth()];
+
+        const btn = document.getElementById('day-' + i);
+        if (btn) {
+          btn.textContent = nombreDia + ' ' + numeroDia + ' ' + nombreMes;
+        }
+      }
+
+      // Selector de días interactivo
+      const dateBtns = document.querySelectorAll('.date-btn');
+      dateBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          dateBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+
+      // 2. SISTEMA DE LOGIN
+      let usuarioActivo = localStorage.getItem('usuario_activo');
+      const btnLogin = document.getElementById('btnLogin');
+      
+      function actualizarBotonLogin() {
+        if (btnLogin) {
+          if (usuarioActivo) {
+            btnLogin.textContent = "Mi Cuenta";
+            btnLogin.style.backgroundColor = "#28a745";
+          } else {
+            btnLogin.textContent = "Iniciar Sesión";
+            btnLogin.style.backgroundColor = "#e50914";
+          }
+        }
+      }
+
+      actualizarBotonLogin();
+
+      if (btnLogin) {
+        btnLogin.addEventListener('click', () => {
+          if (!usuarioActivo) {
+            window.location.href = './login.html';
+          } else {
+            if (confirm("Sesión activa: " + usuarioActivo + "\n¿Deseas cerrar sesión?")) {
+              localStorage.removeItem('usuario_activo');
+              usuarioActivo = null;
+              actualizarBotonLogin();
+              alert("Sesión cerrada.");
+            }
+          }
+        });
+      }
+
+      // 3. MODAL Y BUTACAS
+      const modal = document.getElementById('ticketModal');
+      const modalTitle = document.getElementById('modalMovieTitle');
+      const closeBtn = document.querySelector('.modal-close');
+      const showBtns = document.querySelectorAll('.movie-btn');
+      const seatsContainer = document.getElementById('seatsContainer');
+      const btnConfirmar = document.getElementById('btnConfirmar');
+
+      const rowsData = [
+        { row: 2, left: [214, 212, 210, 28, 26, 24, 22], right: [21, 23, 25, 27, 29, 211] },
+        { row: 3, left: [314, 312, 310, 38, 36, 34, 32], right: [31, 33, 35, 37, 39, 311] },
+        { row: 4, left: [414, 412, 410, 48, 46, 44, 42], right: [41, 43, 45, 47, 49, 411] },
+        { row: 5, left: [514, 512, 510, 58, 56, 54, 52], right: [51, 53, 55, 57, 59, 511] },
+        { row: 6, left: [614, 612, 610, 68, 66, 64, 62], right: [61, 63, 65, 67, 69, 611] }
+      ];
+
+      function renderSeats() {
+        if (!seatsContainer) return;
+        seatsContainer.innerHTML = '';
+        rowsData.forEach(r => {
+          const rowDiv = document.createElement('div');
+          rowDiv.className = 'seat-row';
+          
+          const leftBlock = document.createElement('div');
+          leftBlock.className = 'seats-block';
+          r.left.forEach(seatNum => {
+            const seat = document.createElement('button');
+            seat.className = 'seat';
+            seat.textContent = seatNum;
+            seat.addEventListener('click', () => seat.classList.toggle('selected'));
+            leftBlock.appendChild(seat);
+          });
+          rowDiv.appendChild(leftBlock);
+
+          const aisle = document.createElement('div');
+          aisle.className = 'aisle';
+          rowDiv.appendChild(aisle);
+
+          const rightBlock = document.createElement('div');
+          rightBlock.className = 'seats-block';
+          r.right.forEach(seatNum => {
+            const seat = document.createElement('button');
+            seat.className = 'seat';
+            seat.textContent = seatNum;
+            seat.addEventListener('click', () => seat.classList.toggle('selected'));
+            rightBlock.appendChild(seat);
+          });
+          rowDiv.appendChild(rightBlock);
+
+          seatsContainer.appendChild(rowDiv);
+        });
+      }
+
+      showBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          if (!usuarioActivo) {
+            alert("⚠️ Debes iniciar sesión antes de seleccionar entradas y butacas.");
+            window.location.href = './login.html';
+            return;
+          }
+          const card = e.target.closest('.movie-card');
+          const movieTitle = card.querySelector('.movie-title').textContent;
+          const diaActivo = document.querySelector('.date-btn.active');
+          const fechaTexto = diaActivo ? diaActivo.textContent : '';
+
+          if (modalTitle) modalTitle.textContent = "Seleccioná tu butaca - " + movieTitle + " (" + fechaTexto + ")";
+          renderSeats();
+          if (modal) modal.classList.add('open');
+        });
+      });
+
+      if (closeBtn && modal) modal.addEventListener('click', (e) => { if(e.target === modal) modal.classList.remove('open'); });
+      if (closeBtn) closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+      
+      if (btnConfirmar) {
+        btnConfirmar.addEventListener('click', () => {
+          const selected = document.querySelectorAll('.seat.selected');
+          if (selected.length === 0) alert('Por favor selecciona al menos una butaca.');
+          else { alert("¡Compra exitosa! " + selected.length + " butaca(s)."); modal.classList.remove('open'); }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
