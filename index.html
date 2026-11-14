@@ -21,8 +21,16 @@
     <button class="btn-login" id="btnLogin" onclick="const activo = localStorage.getItem('usuario_activo'); if(!activo) { window.location.href = './login.html'; }">Iniciar Sesión</button>
   </header>
 
-  <!-- Selector de Días Dinámico -->
-  <div class="date-selector-container" id="dateSelectorContainer"></div>
+  <!-- Selector de Días con Botones Estáticos (Actualizados por el reloj mundial) -->
+  <div class="date-selector-container">
+    <button class="date-btn active" id="day-0">Cargando...</button>
+    <button class="date-btn" id="day-1">Cargando...</button>
+    <button class="date-btn" id="day-2">Cargando...</button>
+    <button class="date-btn" id="day-3">Cargando...</button>
+    <button class="date-btn" id="day-4">Cargando...</button>
+    <button class="date-btn" id="day-5">Cargando...</button>
+    <button class="date-btn" id="day-6">Cargando...</button>
+  </div>
 
   <section class="hero">
     <div class="hero-content">
