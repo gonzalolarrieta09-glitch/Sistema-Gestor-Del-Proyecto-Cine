@@ -8,7 +8,7 @@
 </head>
 <body style="display: flex; justify-content: center; align-items: center; height: 100vh; background: radial-gradient(circle at center, #1b202d 0%, #0a0c10 100%); margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
 
-  <div style="width: 100%; max-width: 420px; padding: 2rem;">
+  <div style="width: 100%; max-width: 440px; padding: 2rem;">
     <!-- Tarjeta con degradado y brillo rojo más llamativo -->
     <div class="modal-content" style="background: linear-gradient(145deg, #141824, #0b0e14); padding: 2.5rem; border-radius: 16px; border: 2px solid var(--accent-red); box-shadow: 0 0 25px rgba(229, 9, 20, 0.3), 0 15px 35px rgba(0,0,0,0.7);">
       
@@ -23,10 +23,35 @@
 
       <form id="loginForm" style="display: flex; flex-direction: column; gap: 1.2rem;">
         
-        <!-- Campo Edad (Solo visible al registrarse) -->
-        <div id="ageFieldContainer" style="display: none;">
-          <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Edad</label>
-          <input type="number" id="userAge" placeholder="18" min="1" max="120" style="width: 100%; padding: 0.9rem; border-radius: 8px; border: 1px solid #323846; background: #0e1118; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.3s;">
+        <!-- Campo Fecha de Nacimiento (Solo visible al registrarse) -->
+        <div id="birthdateContainer" style="display: none;">
+          <label style="color: var(--text-muted); font-size: 0.85rem; display: block; margin-bottom: 0.4rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Fecha de Nacimiento</label>
+          <div style="display: flex; gap: 0.5rem;">
+            <!-- Día -->
+            <select id="birthDay" style="flex: 1; padding: 0.8rem; border-radius: 8px; border: 1px solid #323846; background: #0e1118; color: #fff; font-size: 0.9rem; outline: none; cursor: pointer;">
+              <option value="" disabled selected>Día</option>
+            </select>
+            <!-- Mes -->
+            <select id="birthMonth" style="flex: 1.3; padding: 0.8rem; border-radius: 8px; border: 1px solid #323846; background: #0e1118; color: #fff; font-size: 0.9rem; outline: none; cursor: pointer;">
+              <option value="" disabled selected>Mes</option>
+              <option value="1">Enero</option>
+              <option value="2">Febrero</option>
+              <option value="3">Marzo</option>
+              <option value="4">Abril</option>
+              <option value="5">Mayo</option>
+              <option value="6">Junio</option>
+              <option value="7">Julio</option>
+              <option value="8">Agosto</option>
+              <option value="9">Septiembre</option>
+              <option value="10">Octubre</option>
+              <option value="11">Noviembre</option>
+              <option value="12">Diciembre</option>
+            </select>
+            <!-- Año -->
+            <select id="birthYear" style="flex: 1.2; padding: 0.8rem; border-radius: 8px; border: 1px solid #323846; background: #0e1118; color: #fff; font-size: 0.9rem; outline: none; cursor: pointer;">
+              <option value="" disabled selected>Año</option>
+            </select>
+          </div>
         </div>
 
         <div>
