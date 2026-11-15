@@ -6,7 +6,7 @@
   <title>CineNova - Cartelera y Entradas</title>
   <link rel="stylesheet" href="./styles.css">
   
-  <!-- ESTILOS AGREGADOS PARA LAS NUEVAS FUNCIONES -->
+  <!-- ESTILOS AGREGADOS PARA LAS NUEVAS FUNCIONES Y FILTROS -->
   <style>
     /* Banner de Promos en cartelera */
     .promo-banner {
@@ -30,6 +30,27 @@
     .showtimes-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
     .time-btn { background-color: #333; color: white; border: 1px solid #555; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
     .time-btn:hover { background-color: #e50914; border-color: #e50914; }
+
+    /* ESTILOS NUEVOS: Filtros de Búsqueda */
+    .filters-container {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .filters-container input, .filters-container select {
+      padding: 10px 15px;
+      border-radius: 5px;
+      border: 1px solid #444;
+      background: #222;
+      color: white;
+      font-size: 1rem;
+    }
+    .filters-container input:focus, .filters-container select:focus {
+      outline: none;
+      border-color: #e50914;
+    }
 
     /* ESTILOS NUEVOS: Modal de Promociones */
     .promo-list { list-style: none; padding: 0; margin-bottom: 20px; text-align: left; }
@@ -120,9 +141,21 @@
     <!-- BANNER DE PROMOCIONES -->
     <div id="promoBanner" class="promo-banner"></div>
 
+    <!-- FILTROS DE BÚSQUEDA Y CATEGORÍAS -->
+    <div class="filters-container">
+      <input type="text" id="searchInput" placeholder="Buscar película...">
+      <select id="categoryFilter">
+        <option value="all">Todas las categorías</option>
+        <option value="comedia">Comedia</option>
+        <option value="drama">Drama</option>
+        <option value="misterio">Misterio</option>
+        <option value="romance">Romance</option>
+      </select>
+    </div>
+
     <div class="movies-grid">
       <!-- Película 1 -->
-      <article class="movie-card" data-title="Puan">
+      <article class="movie-card" data-title="Puan" data-category="comedia drama">
         <img class="movie-poster" src="puan-frontal-2.jpg" alt="Puan">
         <div class="movie-info">
           <h3 class="movie-title">Puan</h3>
@@ -132,7 +165,7 @@
       </article>
 
       <!-- Película 2 -->
-      <article class="movie-card" data-title="Argentina, 1985">
+      <article class="movie-card" data-title="Argentina, 1985" data-category="drama historica">
         <img class="movie-poster" src="7b371349946b8f9db09651bcdf78c6d16f7edddd03f3c18f26d5d6194f4c3859.jpg" alt="Argentina, 1985">
         <div class="movie-info">
           <h3 class="movie-title">Argentina, 1985</h3>
@@ -142,7 +175,7 @@
       </article>
 
       <!-- Película 3 -->
-      <article class="movie-card" data-title="Trenque Lauquen">
+      <article class="movie-card" data-title="Trenque Lauquen" data-category="misterio romance">
         <img class="movie-poster" src="afiche-trenque.jpg" alt="Trenque Lauquen">
         <div class="movie-info">
           <h3 class="movie-title">Trenque Lauquen</h3>
@@ -152,7 +185,7 @@
       </article>
 
       <!-- Película 4 -->
-      <article class="movie-card" data-title="Blondi">
+      <article class="movie-card" data-title="Blondi" data-category="comedia drama">
         <img class="movie-poster" src="Blondi-290102419-large.jpg" alt="Blondi">
         <div class="movie-info">
           <h3 class="movie-title">Blondi</h3>
@@ -259,7 +292,7 @@
 
   <!-- SCRIPT INTEGRADO Y ACTUALIZADO -->
   <script>
-    // AGREGADO: Función para calcular descuentos (Martes 2x1 / Miércoles 50% OFF)
+    // Función para calcular descuentos (Martes 2x1 / Miércoles 50% OFF)
     function calcularTotalTicket(preciosArticulos, diaDeLaSemana) {
       if (!preciosArticulos || preciosArticulos.length === 0) return 0;
       
@@ -354,8 +387,10 @@
         }
       }
 
-      // 2. FUNCIÓN PARA ACTUALIZAR PELÍCULAS SEGÚN EL DÍA
-      function actualizarCartelera(boton) {
+      // 2. FUNCIÓN PARA ACTUALIZAR PELÍCULAS SEGÚN EL DÍA Y APLICAR FILTROS
+      function actualizarCartelera(boton = document.querySelector('.date-btn.active')) {
+        if(!boton) return;
+        
         dateBtns.forEach(b => b.classList.remove('active'));
         boton.classList.add('active');
 
@@ -373,16 +408,24 @@
           promoBanner.style.display = "none";
         }
 
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const selectedCategory = document.getElementById('categoryFilter').value.toLowerCase();
         const peliculasDOM = document.querySelectorAll('.movie-card');
         
         peliculasDOM.forEach(card => {
           let titulo = card.dataset.title;
+          let categorias = card.dataset.category || "";
           let infoPeli = carteleraInfo[titulo];
           let contenedorHorarios = card.querySelector('.showtimes-container');
           
           contenedorHorarios.innerHTML = '';
 
-          if (infoPeli.diasPermitidos.includes(numDia)) {
+          // Lógica de filtrado
+          const coincideBusqueda = titulo.toLowerCase().includes(searchTerm);
+          const coincideCategoria = selectedCategory === 'all' || categorias.includes(selectedCategory);
+          const estaDisponibleElDia = infoPeli.diasPermitidos.includes(numDia);
+
+          if (coincideBusqueda && coincideCategoria && estaDisponibleElDia) {
             card.style.display = "flex"; 
             
             let horariosAMostrar = esFinde ? infoPeli.horariosFinde : infoPeli.horariosSemana;
@@ -404,6 +447,7 @@
         });
       }
 
+      // Inicializar cartelera y agregar listeners de filtros
       actualizarCartelera(document.getElementById('day-0'));
 
       dateBtns.forEach(btn => {
@@ -411,6 +455,10 @@
           actualizarCartelera(this);
         });
       });
+
+      document.getElementById('searchInput').addEventListener('input', () => actualizarCartelera());
+      document.getElementById('categoryFilter').addEventListener('change', () => actualizarCartelera());
+
 
       // ==========================================
       // FUNCIONALIDAD: MODAL PROMOCIONES
@@ -427,7 +475,7 @@
       if (closePromo) closePromo.addEventListener('click', () => promoModal.classList.remove('open'));
       promoModal.addEventListener('click', (e) => { if(e.target === promoModal) promoModal.classList.remove('open'); });
 
-      // Generador de Cupón Sorpresa CON RESTRICCIÓN DE LOGIN
+      // Generador de Cupón Sorpresa
       const btnGenerateCoupon = document.getElementById('btnGenerateCoupon');
       const couponResult = document.getElementById('couponResult');
       const cupones = ['NOVA20', 'POCHOCLOSFREE', 'CINE50', 'VIPUPGRADE', 'SUPERNOVA10'];
@@ -529,7 +577,7 @@
       if (closeTicket) closeTicket.addEventListener('click', () => ticketModal.classList.remove('open'));
       ticketModal.addEventListener('click', (e) => { if(e.target === ticketModal) ticketModal.classList.remove('open'); });
 
-      // 5. CONFIRMAR COMPRA Y GENERAR COMPROBANTE DE VENTA
+      // 5. CONFIRMAR COMPRA Y GENERAR COMPROBANTE
       const btnConfirmar = document.getElementById('btnConfirmar');
       const receiptModal = document.getElementById('receiptModal');
       const btnCerrarRecibo = document.getElementById('btnCerrarRecibo');
@@ -543,12 +591,10 @@
             return;
           }
 
-          // Variables aleatorias del ticket
           const numVenta = Math.floor(Math.random() * 90000000) + 10000000;
           const numFuncion = Math.floor(Math.random() * 9000) + 1000;
           const peliData = carteleraInfo[seleccionFinal.pelicula];
           
-          // Cálculos de Precios con Descuentos Aplicados
           const tipoSeleccionado = document.getElementById('tipoEntrada').value;
           const precioUnitario = preciosEntradas[tipoSeleccionado];
           const cantidadEntradas = selected.length;
@@ -557,11 +603,9 @@
           const diaDeLaSemana = seleccionFinal.fecha.split(' ')[0];
           const precioTotal = calcularTotalTicket(preciosArticulos, diaDeLaSemana);
           
-          // Identificadores de butacas
           let butacasIds = [];
           selected.forEach(s => butacasIds.push(s.textContent));
 
-          // Rellenar visualmente el Comprobante
           document.getElementById('recVenta').textContent = numVenta;
           document.getElementById('recFuncion').textContent = numFuncion;
           document.getElementById('recFecha').textContent = `${seleccionFinal.fecha} - ${seleccionFinal.hora}hs`;
@@ -572,7 +616,6 @@
           document.getElementById('recTipo').textContent = nombresEntradas[tipoSeleccionado];
           document.getElementById('recCant').textContent = cantidadEntradas;
           
-          // Mostrar cartel de promoción si aplica
           const filaDescuento = document.getElementById('filaDescuento');
           if (diaDeLaSemana.toLowerCase() === 'martes') {
             filaDescuento.style.display = 'flex';
@@ -586,13 +629,11 @@
 
           document.getElementById('recTotal').textContent = precioTotal.toLocaleString('es-AR');
 
-          // Cierra ventana de butacas y Abre Comprobante
           ticketModal.classList.remove('open');
           receiptModal.classList.add('open');
         });
       }
 
-      // Cerrar el Comprobante de venta
       if (btnCerrarRecibo) {
         btnCerrarRecibo.addEventListener('click', () => {
           receiptModal.classList.remove('open');
