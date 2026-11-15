@@ -6,24 +6,24 @@
   <title>CineNova - Cartelera y Entradas</title>
   <link rel="stylesheet" href="./styles.css">
   
-  <!-- ESTILOS AGREGADOS PARA LAS NUEVAS FUNCIONES Y FILTROS -->
   <style>
     .hero-paisajes {
-  position: relative; height: 380px; overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
-  background: #111; /* por si falta alguna imagen */
-}
-.hero-slide {
-  position: absolute; inset: 0;
-  background-size: cover; background-position: center;
-  opacity: 0; transition: opacity 1.2s ease;
-}
-.hero-slide.active { opacity: 1; }
-.hero-paisajes::after { /* oscurece para que se lea el texto */
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.7));
-}
-.hero-paisajes .hero-content { position: relative; z-index: 2; text-align: center; color: #fff; padding: 0 20px; }
+      position: relative; height: 380px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      background: #111;
+    }
+    .hero-slide {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      opacity: 0; transition: opacity 1.2s ease;
+    }
+    .hero-slide.active { opacity: 1; }
+    .hero-paisajes::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.7));
+    }
+    .hero-paisajes .hero-content { position: relative; z-index: 2; text-align: center; color: #fff; padding: 0 20px; }
+
     /* Banner de Promos en cartelera */
     .promo-banner {
       background: linear-gradient(90deg, #e50914, #ff4b2b);
@@ -47,7 +47,7 @@
     .time-btn { background-color: #333; color: white; border: 1px solid #555; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
     .time-btn:hover { background-color: #e50914; border-color: #e50914; }
 
-    /* ESTILOS NUEVOS: Filtros de Búsqueda */
+    /* Filtros de Búsqueda */
     .filters-container {
       display: flex;
       gap: 15px;
@@ -68,7 +68,7 @@
       border-color: #e50914;
     }
 
-    /* ESTILOS NUEVOS: Modal de Promociones */
+    /* Modal de Promociones */
     .promo-list { list-style: none; padding: 0; margin-bottom: 20px; text-align: left; }
     .promo-list li { background: #222; margin: 10px 0; padding: 15px; border-left: 4px solid #e50914; border-radius: 4px; color: #ddd; }
     .promo-list li strong { color: #fff; }
@@ -79,7 +79,7 @@
     .btn-coupon:hover { background: #b0060e; }
     .btn-ahorro:hover { background: #1e7e34; }
 
-    /* ESTILOS NUEVOS: Diseño del Comprobante de Venta y Tipo de Entrada */
+    /* Comprobante de Venta y Tipo de Entrada */
     .receipt-content {
       background: #fdfdfd;
       color: #111;
@@ -145,15 +145,15 @@
   </div>
 
   <section class="hero-paisajes" id="heroPaisajes">
-  <div class="hero-slide active" style="background-image:url('./paisaje1.jpg')"></div>
-  <div class="hero-slide" style="background-image:url('./paisaje2.jpg')"></div>
-  <div class="hero-slide" style="background-image:url('./paisaje3.jpg')"></div>
-  <div class="hero-slide" style="background-image:url('./paisaje4.jpg')"></div>
-  <div class="hero-content">
-    <h1>CINE ARGENTINO</h1>
-    <p>Disfrutá de lo mejor del cine argentino con la más alta tecnología en imagen y sonido.</p>
-  </div>
-</section>
+    <div class="hero-slide active" style="background-image:url('./paisaje1.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('./paisaje2.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('./paisaje3.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('./paisaje4.jpg')"></div>
+    <div class="hero-content">
+      <h1>CINE ARGENTINO</h1>
+      <p>Disfrutá de lo mejor del cine argentino con la más alta tecnología en imagen y sonido.</p>
+    </div>
+  </section>
 
   <main class="container">
     <h2 class="section-title">En Cartelera - INCAA</h2>
@@ -295,7 +295,7 @@
       <div class="receipt-row"><span>Tipo de Ticket:</span> <strong id="recTipo"></strong></div>
       <div class="receipt-row"><span>Cant. Entradas:</span> <strong id="recCant"></strong></div>
       
-      <!-- AGREGADO: Fila para indicar si aplicó descuento -->
+      <!-- Fila para indicar si aplicó descuento -->
       <div class="receipt-row" id="filaDescuento" style="display:none; color:#e50914;">
         <span>Promo Aplicada:</span> <strong id="recPromo"></strong>
       </div>
@@ -338,7 +338,18 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       
-      // SISTEMA DE LOGIN INICIAL
+      // 1. CARRUSEL HERO AUTOMÁTICO
+      const slides = document.querySelectorAll('.hero-slide');
+      if (slides.length > 0) {
+        let slideActual = 0;
+        setInterval(() => {
+          slides[slideActual].classList.remove('active');
+          slideActual = (slideActual + 1) % slides.length;
+          slides[slideActual].classList.add('active');
+        }, 5000);
+      }
+
+      // 2. SISTEMA DE LOGIN INICIAL
       let usuarioActivo = localStorage.getItem('usuario_activo');
       
       // CONFIGURACIÓN DE LA CARTELERA (Actualizado con INCAA y Salas)
@@ -388,7 +399,7 @@
 
       let seleccionFinal = { pelicula: "", fecha: "", hora: "" };
 
-      // 1. CARGAR DÍAS DE LA SEMANA
+      // 3. CARGAR DÍAS DE LA SEMANA
       const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
       const mesesAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
       const dateBtns = document.querySelectorAll('.date-btn');
@@ -407,7 +418,7 @@
         }
       }
 
-      // 2. FUNCIÓN PARA ACTUALIZAR PELÍCULAS SEGÚN EL DÍA Y APLICAR FILTROS
+      // 4. FUNCIÓN PARA ACTUALIZAR PELÍCULAS SEGÚN EL DÍA Y APLICAR FILTROS
       function actualizarCartelera(boton = document.querySelector('.date-btn.active')) {
         if(!boton) return;
         
@@ -418,18 +429,22 @@
         let esFinde = (numDia === 0 || numDia === 5 || numDia === 6);
         
         const promoBanner = document.getElementById('promoBanner');
-        if (numDia === 3) {
-          promoBanner.textContent = "🎟️ ¡Miércoles de Cine! 50% de descuento en todas las funciones.";
-          promoBanner.style.display = "block";
-        } else if (numDia === 2) {
-          promoBanner.textContent = "🍿 ¡Martes 2x1 en entradas comprando online!";
-          promoBanner.style.display = "block";
-        } else {
-          promoBanner.style.display = "none";
+        if (promoBanner) {
+          if (numDia === 3) {
+            promoBanner.textContent = "🎟️ ¡Miércoles de Cine! 50% de descuento en todas las funciones.";
+            promoBanner.style.display = "block";
+          } else if (numDia === 2) {
+            promoBanner.textContent = "🍿 ¡Martes 2x1 en entradas comprando online!";
+            promoBanner.style.display = "block";
+          } else {
+            promoBanner.style.display = "none";
+          }
         }
 
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-        const selectedCategory = document.getElementById('categoryFilter').value.toLowerCase();
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
+        const selectedCategory = categoryFilter ? categoryFilter.value.toLowerCase() : "all";
         const peliculasDOM = document.querySelectorAll('.movie-card');
         
         peliculasDOM.forEach(card => {
@@ -438,12 +453,13 @@
           let infoPeli = carteleraInfo[titulo];
           let contenedorHorarios = card.querySelector('.showtimes-container');
           
+          if (!contenedorHorarios) return;
           contenedorHorarios.innerHTML = '';
 
           // Lógica de filtrado
           const coincideBusqueda = titulo.toLowerCase().includes(searchTerm);
           const coincideCategoria = selectedCategory === 'all' || categorias.includes(selectedCategory);
-          const estaDisponibleElDia = infoPeli.diasPermitidos.includes(numDia);
+          const estaDisponibleElDia = infoPeli && infoPeli.diasPermitidos.includes(numDia);
 
           if (coincideBusqueda && coincideCategoria && estaDisponibleElDia) {
             card.style.display = "flex"; 
@@ -476,24 +492,26 @@
         });
       });
 
-      document.getElementById('searchInput').addEventListener('input', () => actualizarCartelera());
-      document.getElementById('categoryFilter').addEventListener('change', () => actualizarCartelera());
+      if (searchInput) searchInput.addEventListener('input', () => actualizarCartelera());
+      if (categoryFilter) categoryFilter.addEventListener('change', () => actualizarCartelera());
 
 
       // ==========================================
-      // FUNCIONALIDAD: MODAL PROMOCIONES
+      // 5. FUNCIONALIDAD: MODAL PROMOCIONES
       // ==========================================
       const navPromos = document.getElementById('navPromos');
       const promoModal = document.getElementById('promoModal');
       const closePromo = document.getElementById('closePromo');
 
-      if (navPromos) navPromos.addEventListener('click', (e) => { 
-        e.preventDefault(); 
-        promoModal.classList.add('open'); 
-      });
+      if (navPromos && promoModal) {
+        navPromos.addEventListener('click', (e) => { 
+          e.preventDefault(); 
+          promoModal.classList.add('open'); 
+        });
+      }
       
-      if (closePromo) closePromo.addEventListener('click', () => promoModal.classList.remove('open'));
-      promoModal.addEventListener('click', (e) => { if(e.target === promoModal) promoModal.classList.remove('open'); });
+      if (closePromo && promoModal) closePromo.addEventListener('click', () => promoModal.classList.remove('open'));
+      if (promoModal) promoModal.addEventListener('click', (e) => { if(e.target === promoModal) promoModal.classList.remove('open'); });
 
       // Generador de Cupón Sorpresa
       const btnGenerateCoupon = document.getElementById('btnGenerateCoupon');
@@ -502,7 +520,6 @@
       
       if(btnGenerateCoupon) {
         btnGenerateCoupon.addEventListener('click', () => {
-          
           if (!usuarioActivo) {
             alert("⚠️ Debes iniciar sesión para poder generar y ver tu cupón sorpresa.");
             window.location.href = './login.html';
@@ -510,7 +527,7 @@
           }
 
           let cuponAleatorio = cupones[Math.floor(Math.random() * cupones.length)];
-          couponResult.textContent = cuponAleatorio;
+          if (couponResult) couponResult.textContent = cuponAleatorio;
           
           navigator.clipboard.writeText(cuponAleatorio).then(() => {
             alert(`¡Felicidades! Tu código ${cuponAleatorio} se copió al portapapeles. ¡Mostralo en la boletería!`);
@@ -533,7 +550,7 @@
 
           if(diaAhorro) {
             diaAhorro.click(); 
-            promoModal.classList.remove('open'); 
+            if (promoModal) promoModal.classList.remove('open'); 
             document.querySelector('.movies-grid').scrollIntoView({ behavior: 'smooth' }); 
           } else {
             alert("En los próximos 7 días no tenemos promociones programadas.");
@@ -542,7 +559,7 @@
       }
 
 
-      // 3. PREPARAR COMPRA Y ABRIR MODAL TICKETS
+      // 6. PREPARAR COMPRA Y ABRIR MODAL TICKETS
       const ticketModal = document.getElementById('ticketModal');
       const modalTitle = document.getElementById('modalMovieTitle');
       const closeTicket = document.getElementById('closeTicket');
@@ -558,20 +575,20 @@
         seleccionFinal.fecha = fecha;
         seleccionFinal.hora = hora;
 
-        modalTitle.textContent = `${titulo} - ${fecha} a las ${hora}hs`;
+        if (modalTitle) modalTitle.textContent = `${titulo} - ${fecha} a las ${hora}hs`;
         renderSeats();
-        ticketModal.classList.add('open');
+        if (ticketModal) ticketModal.classList.add('open');
       }
 
-   // Sistema de butacas profesional: 5 filas (A a E) con bloques laterales y alfanuméricos
+      // Sistema de butacas profesional: 6 filas (A a F) con bloques laterales y alfanuméricos (1 al 8 por fila)
       const seatsContainer = document.getElementById('seatsContainer');
       const rowsData = [
-        { row: 'A', left: ['1A', '2A', '3A', '4A',], right: ['5A', '6A', '7A', '8A'] },
-        { row: 'B', left: ['1B', '2B', '3B','4B',], right: ['5B', '6B', '7B', '8B'] },
-        { row: 'C', left: ['1C', '2C', '3C','4C',], right: ['5C', '6C', '7C', '8C'] },
-        { row: 'D', left: ['1D', '2D', '3D','4D',] right: ['5D', '6D', '7D', '8D'] },
-        { row: 'E', left: ['1E', '2E', '3E','4E',], right: ['5E', '6E', '7E', '8E'] }
-        
+        { row: 'A', left: ['1A', '2A', '3A', '4A'], right: ['5A', '6A', '7A', '8A'] },
+        { row: 'B', left: ['1B', '2B', '3B', '4B'], right: ['5B', '6B', '7B', '8B'] },
+        { row: 'C', left: ['1C', '2C', '3C', '4C'], right: ['5C', '6C', '7C', '8C'] },
+        { row: 'D', left: ['1D', '2D', '3D', '4D'], right: ['5D', '6D', '7D', '8D'] },
+        { row: 'E', left: ['1E', '2E', '3E', '4E'], right: ['5E', '6E', '7E', '8E'] },
+        { row: 'F', left: ['1F', '2F', '3F', '4F'], right: ['5F', '6F', '7F', '8F'] }
       ];
 
       function renderSeats() {
@@ -581,24 +598,46 @@
           const rowDiv = document.createElement('div');
           rowDiv.className = 'seat-row';
           
-          const leftBlock = document.createElement('div'); leftBlock.className = 'seats-block';
-          r.left.forEach(n => { let s = document.createElement('button'); s.className = 'seat'; s.textContent = n; s.addEventListener('click', () => s.classList.toggle('selected')); leftBlock.appendChild(s); });
+          const numLeft = document.createElement('span');
+          numLeft.className = 'row-number';
+          numLeft.textContent = r.row;
+          rowDiv.appendChild(numLeft);
+
+          const leftBlock = document.createElement('div'); 
+          leftBlock.className = 'seats-block';
+          r.left.forEach(n => { 
+            let s = document.createElement('button'); 
+            s.className = 'seat'; 
+            s.textContent = n; 
+            s.addEventListener('click', () => s.classList.toggle('selected')); 
+            leftBlock.appendChild(s); 
+          });
           rowDiv.appendChild(leftBlock);
           
-          let aisle = document.createElement('div'); aisle.className = 'aisle'; rowDiv.appendChild(aisle);
+          let aisle = document.createElement('div'); 
+          aisle.className = 'aisle'; 
+          rowDiv.appendChild(aisle);
           
-          const rightBlock = document.createElement('div'); rightBlock.className = 'seats-block';
-          r.right.forEach(n => { let s = document.createElement('button'); s.className = 'seat'; s.textContent = n; s.addEventListener('click', () => s.classList.toggle('selected')); rightBlock.appendChild(s); });
+          const rightBlock = document.createElement('div'); 
+          rightBlock.className = 'seats-block';
+          r.right.forEach(n => { 
+            let s = document.createElement('button'); 
+            s.className = 'seat'; 
+            s.textContent = n; 
+            s.addEventListener('click', () => s.classList.toggle('selected')); 
+            rightBlock.appendChild(s); 
+          });
           rowDiv.appendChild(rightBlock);
           
           seatsContainer.appendChild(rowDiv);
         });
       }
 
-      if (closeTicket) closeTicket.addEventListener('click', () => ticketModal.classList.remove('open'));
-      ticketModal.addEventListener('click', (e) => { if(e.target === ticketModal) ticketModal.classList.remove('open'); });
+      if (closeTicket && ticketModal) closeTicket.addEventListener('click', () => ticketModal.classList.remove('open'));
+      if (ticketModal) ticketModal.addEventListener('click', (e) => { if(e.target === ticketModal) ticketModal.classList.remove('open'); });
 
-      // 5. CONFIRMAR COMPRA Y GENERAR COMPROBANTE
+
+      // 7. CONFIRMAR COMPRA Y GENERAR COMPROBANTE
       const btnConfirmar = document.getElementById('btnConfirmar');
       const receiptModal = document.getElementById('receiptModal');
       const btnCerrarRecibo = document.getElementById('btnCerrarRecibo');
@@ -616,7 +655,8 @@
           const numFuncion = Math.floor(Math.random() * 9000) + 1000;
           const peliData = carteleraInfo[seleccionFinal.pelicula];
           
-          const tipoSeleccionado = document.getElementById('tipoEntrada').value;
+          const tipoEntradaSelect = document.getElementById('tipoEntrada');
+          const tipoSeleccionado = tipoEntradaSelect ? tipoEntradaSelect.value : 'mayor';
           const precioUnitario = preciosEntradas[tipoSeleccionado];
           const cantidadEntradas = selected.length;
           
@@ -638,31 +678,34 @@
           document.getElementById('recCant').textContent = cantidadEntradas;
           
           const filaDescuento = document.getElementById('filaDescuento');
-          if (diaDeLaSemana.toLowerCase() === 'martes') {
-            filaDescuento.style.display = 'flex';
-            document.getElementById('recPromo').textContent = 'Martes 2x1';
-          } else if (diaDeLaSemana.toLowerCase() === 'miércoles' || diaDeLaSemana.toLowerCase() === 'miercoles') {
-            filaDescuento.style.display = 'flex';
-            document.getElementById('recPromo').textContent = 'Miércoles 50% OFF';
-          } else {
-            filaDescuento.style.display = 'none';
+          if (filaDescuento) {
+            if (diaDeLaSemana.toLowerCase() === 'martes') {
+              filaDescuento.style.display = 'flex';
+              document.getElementById('recPromo').textContent = 'Martes 2x1';
+            } else if (diaDeLaSemana.toLowerCase() === 'miércoles' || diaDeLaSemana.toLowerCase() === 'miercoles') {
+              filaDescuento.style.display = 'flex';
+              document.getElementById('recPromo').textContent = 'Miércoles 50% OFF';
+            } else {
+              filaDescuento.style.display = 'none';
+            }
           }
 
           document.getElementById('recTotal').textContent = precioTotal.toLocaleString('es-AR');
 
-          ticketModal.classList.remove('open');
-          receiptModal.classList.add('open');
+          if (ticketModal) ticketModal.classList.remove('open');
+          if (receiptModal) receiptModal.classList.add('open');
         });
       }
 
-      if (btnCerrarRecibo) {
+      if (btnCerrarRecibo && receiptModal) {
         btnCerrarRecibo.addEventListener('click', () => {
           receiptModal.classList.remove('open');
           alert("El comprobante se ha guardado en tu cuenta y enviado a tu correo registrado.");
         });
       }
 
-      // 6. SISTEMA DE BOTÓN DE LOGIN SUPERIOR
+
+      // 8. SISTEMA DE BOTÓN DE LOGIN SUPERIOR
       const btnLogin = document.getElementById('btnLogin');
       
       function actualizarBotonLogin() {
