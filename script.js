@@ -14,7 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
-
+const slides = document.querySelectorAll('.hero-slide');
+let slideActual = 0;
+setInterval(() => {
+  slides[slideActual].classList.remove('active');
+  slideActual = (slideActual + 1) % slides.length;
+  slides[slideActual].classList.add('active');
+}, 5000);
   actualizarBotonLogin();
 
   // Redirigir a la página de login al hacer clic en Iniciar Sesión
