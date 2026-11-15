@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CineNova - Promociones</title>
+<link rel="stylesheet" href="./styles.css">
+
+<style>
+  .promo-hero {
+    text-align: center;
+    padding: 50px 20px 30px;
+    background: linear-gradient(180deg, #1a1a1a, #111);
+  }
+  .promo-hero h1 { margin: 0 0 10px; font-size: 2.2rem; color: #fff; }
+  .promo-hero p { margin: 0; color: #bbb; }
+
+  .promo-hoy {
+    display: none;
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 1.15rem;
+    font-weight: bold;
+    color: #fff;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #e50914, #ff4b2b);
+  }
+
+  .promo-container { max-width: 1100px; margin: 0 auto; padding: 20px; color: #ddd; }
+  .promo-container h2 { color: #fff; border-left: 4px solid #e50914; padding-left: 10px; }
+
+  .day-filters { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0; }
+  .day-filter {
+    background: #222; color: #fff; border: 1px solid #444;
+    padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s;
+  }
+  .day-filter:hover { border-color: #e50914; }
+  .day-filter.active { background: #e50914; border-color: #e50914; }
+
+  .promo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+  .promo-card {
+    background: #1c1c1c; border: 1px solid #333; border-top: 4px solid #e50914;
+    border-radius: 8px; padding: 20px; transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .promo-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(229, 9, 20, 0.25); }
+  .promo-card .promo-icon { font-size: 2.2rem; }
+  .promo-card h3 { margin: 10px 0 5px; color: #fff; }
+  .promo-card .promo-dias { color: #e50914; font-weight: bold; font-size: 0.9rem; margin-bottom: 10px; }
+  .promo-card p { margin: 0; color: #bbb; font-size: 0.95rem; line-height: 1.4; }
+  .promo-card .promo-cond { margin-top: 12px; font-size: 0.8rem; color: #888; }
+  .promo-empty { text-align: center; color: #888; grid-column: 1 / -1; padding: 30px; }
+
+  .promo-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-top: 20px; }
+  .promo-panel { background: #1c1c1c; border: 1px solid #333; border-radius: 8px; padding: 20px; }
+  .promo-panel h3 { margin-top: 0; color: #fff; }
+
+  .calc-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+  .calc-row label { color: #ccc; }
+  .calc-row select, .calc-row input {
+    background: #111; color: #fff; border: 1px solid #555; border-radius: 4px;
+    padding: 8px 10px; font-size: 1rem; width: 55%;
+  }
+  .calc-row select:focus, .calc-row input:focus { outline: none; border-color: #e50914; }
+  .calc-result { background: #111; border: 1px dashed #e50914; border-radius: 6px; padding: 15px; margin-top: 15px; }
+  .calc-result div { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .calc-result .total { font-size: 1.3rem; font-weight: bold; color: #fff; }
+  .calc-result .ahorro { color: #28a745; font-weight: bold; }
+  .calc-promo-aplicada { color: #e50914; font-size: 0.9rem; margin-top: 8px; text-align: center; }
+
+  .coupon-box { background: #111; border: 1px dashed #e50914; padding: 15px; text-align: center; border-radius: 4px; }
+  .coupon-box p { color: #bbb; margin-top: 0; }
+  #couponResult { color: #e50914; margin: 10px 0; font-size: 1.6rem; letter-spacing: 2px; }
+  .coupon-desc { color: #aaa; font-size: 0.9rem; min-height: 1.2em; }
+
+  .btn-promo {
+    background: #e50914; color: #fff; border: none; padding: 10px 20px; cursor: pointer;
+    font-weight: bold; border-radius: 4px; width: 100%; margin-top: 10px; font-size: 1rem; transition: 0.3s;
+  }
+  .btn-promo:hover { background: #b0060e; }
+  .btn-promo:disabled { background: #28a745; cursor: default; }
+  .btn-volver { background: #333; }
+  .btn-volver:hover { background: #555; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Cine<span>Nova</span></div>
+  <nav>
+    <ul>
+      <li><a href="./index.html">Cartelera</a></li>
+      <li><a href="#">Estrenos INCAA</a></li>
+      <li><a href="./promocion.html" class="active">Promociones</a></li>
+    </ul>
+  </nav>
+  <button class="btn-login" id="btnLogin">Iniciar Sesión</button>
+</header>
+
+<section class="promo-hero">
+  <h1>🎟️ Promociones y Beneficios</h1>
+  <p>Aprovechá los mejores descuentos para disfrutar del cine argentino.</p>
+</section>
+
+<div id="promoHoy" class="promo-hoy"></div>
+
+<main class="promo-container">
+
+  <h2>Todas nuestras promos</h2>
+
+  <div class="day-filters" id="dayFilters">
+    <button class="day-filter active" data-dia="todos">Todas</button>
+    <button class="day-filter" data-dia="1">Lunes</button>
+    <button class="day-filter" data-dia="2">Martes</button>
+    <button class="day-filter" data-dia="3">Miércoles</button>
+    <button class="day-filter" data-dia="4">Jueves</button>
+    <button class="day-filter" data-dia="5">Viernes</button>
+    <button class="day-filter" data-dia="6">Sábado</button>
+    <button class="day-filter" data-dia="0">Domingo</button>
+  </div>
+
+  <div class="promo-grid" id="promoGrid"></div>
+
+  <div class="promo-panels">
+
+    <!-- Calculadora de ahorro -->
+    <section class="promo-panel">
+      <h3>💸 Calculadora de ahorro</h3>
+      <div class="calc-row">
+        <label for="calcDia">Día de la función</label>
+        <select id="calcDia">
+          <option value="1">Lunes</option>
+          <option value="2">Martes</option>
+          <option value="3">Miércoles</option>
+          <option value="4">Jueves</option>
+          <option value="5">Viernes</option>
+          <option value="6">Sábado</option>
+          <option value="0">Domingo</option>
+        </select>
+      </div>
+      <div class="calc-row">
+        <label for="calcTipo">Tipo de entrada</label>
+        <select id="calcTipo">
+          <option value="mayor">General / Mayor ($6.000)</option>
+          <option value="menor">Menor ($4.500)</option>
+          <option value="jubilado">Jubilado ($3.000)</option>
+        </select>
+      </div>
+      <div class="calc-row">
+        <label for="calcCant">Cantidad</label>
+        <input type="number" id="calcCant" min="1" max="10" value="2">
+      </div>
+      <div class="calc-row">
+        <label for="calcNova">¿Tenés Tarjeta Nova?</label>
+        <select id="calcNova">
+          <option value="no">No</option>
+          <option value="si">Sí</option>
+        </select>
+      </div>
+
+      <div class="calc-result">
+        <div><span>Precio sin promo:</span> <strong id="calcSubtotal">$0</strong></div>
+        <div><span>Total a pagar:</span> <span class="total" id="calcTotal">$0</span></div>
+        <div><span>Te ahorrás:</span> <span class="ahorro" id="calcAhorro">$0</span></div>
+        <div class="calc-promo-aplicada" id="calcPromoAplicada"></div>
+      </div>
+    </section>
+
+    <!-- Cupón sorpresa -->
+    <section class="promo-panel">
+      <h3>🎲 Cupón sorpresa</h3>
+      <div class="coupon-box">
+        <p>¿Tenés suerte hoy? Generá tu código exclusivo para usuarios registrados.</p>
+        <h4 id="couponResult">---</h4>
+        <div class="coupon-desc" id="couponDesc"></div>
+        <button class="btn-promo" id="btnGenerateCoupon">🎲 Generar Cupón Sorpresa</button>
+      </div>
+      <button class="btn-promo btn-volver" id="btnVolver">← Volver a la Cartelera</button>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <p>© 2026 CineNova. Todos los derechos reservados.</p>
+</footer>
+
+<script src="./promocion.js"></script>
+</body>
+</html>
