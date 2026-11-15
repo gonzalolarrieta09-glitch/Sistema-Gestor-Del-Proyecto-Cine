@@ -97,35 +97,39 @@ setInterval(() => {
   const seatsContainer = document.getElementById('seatsContainer');
   const btnConfirmar = document.getElementById('btnConfirmar');
 
- // Sistema de butacas de 5 filas (A a E) con bloques organizados y numeración alfanumérica
+ // Sistema de butacas de 6 filas (A a F) con numeración del 1 al 8 por fila
       const rowsData = [
         { 
           row: 'A', 
-          left:  ['1A', '2A', '3A'], 
-          right: ['4A', '5A', '6A', '7A'] 
+          left:  ['1A', '2A', '3A', '4A'], 
+          right: ['5A', '6A', '7A', '8A'] 
         },
         { 
           row: 'B', 
-          left:  ['1B', '2B', '3B'], 
-          right: ['4B', '5B', '6B', '7B'] 
+          left:  ['1B', '2B', '3B', '4B'], 
+          right: ['5B', '6B', '7B', '8B'] 
         },
         { 
           row: 'C', 
-          left:  ['1C', '2C', '3C'], 
-          right: ['4C', '5C', '6C', '7C'] 
+          left:  ['1C', '2C', '3C', '4C'], 
+          right: ['5C', '6C', '7C', '8C'] 
         },
         { 
           row: 'D', 
-          left:  ['1D', '2D', '3D'], 
-          right: ['4D', '5D', '6D', '7D'] 
+          left:  ['1D', '2D', '3D', '4D'], 
+          right: ['5D', '6D', '7D', '8D'] 
         },
         { 
           row: 'E', 
-          left:  ['1E', '2E', '3E'], 
-          right: ['4E', '5E', '6E', '7E'] 
+          left:  ['1E', '2E', '3E', '4E'], 
+          right: ['5E', '6E', '7E', '8E'] 
+        },
+        { 
+          row: 'F', 
+          left:  ['1F', '2F', '3F', '4F'], 
+          right: ['5F', '6F', '7F', '8F'] 
         }
       ];
-
   function renderSeats() {
     if (!seatsContainer) return;
     seatsContainer.innerHTML = '';
