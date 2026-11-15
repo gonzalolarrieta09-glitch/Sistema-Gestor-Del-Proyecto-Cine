@@ -272,13 +272,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!seatsContainer) return;
     seatsContainer.innerHTML = '';
 
-    // Resetear inputs de cantidades al abrir el modal
+    // Resetear contadores de cantidades al abrir el modal (se usa textContent para los spans)
     const qMayor = document.getElementById('qtyMayor');
     const qMenor = document.getElementById('qtyMenor');
     const qJubilado = document.getElementById('qtyJubilado');
-    if(qMayor) qMayor.value = 0;
-    if(qMenor) qMenor.value = 0;
-    if(qJubilado) qJubilado.value = 0;
+    if(qMayor) qMayor.textContent = '0';
+    if(qMenor) qMenor.textContent = '0';
+    if(qJubilado) qJubilado.textContent = '0';
 
     rowsData.forEach(r => {
       const rowDiv = document.createElement('div');
@@ -335,6 +335,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if (countSpan) countSpan.textContent = selected.length;
   }
 
+  // Lógica de botones + y - para las entradas
+  document.querySelectorAll('.btn-plus').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const targetId = e.target.getAttribute('data-target');
+      const span = document.getElementById(targetId);
+      if (span) {
+        span.textContent = parseInt(span.textContent || '0') + 1;
+      }
+    });
+  });
+
+  document.querySelectorAll('.btn-minus').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const targetId = e.target.getAttribute('data-target');
+      const span = document.getElementById(targetId);
+      if (span) {
+        let val = parseInt(span.textContent || '0');
+        if (val > 0) span.textContent = val - 1;
+      }
+    });
+  });
+
   function prepararCompra(titulo, fecha, hora) {
     if (!usuarioActivo) {
       alert("⚠️ Debes iniciar sesión antes de seleccionar entradas y butacas.");
@@ -374,9 +396,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const qMayor = parseInt(document.getElementById('qtyMayor')?.value) || 0;
-      const qMenor = parseInt(document.getElementById('qtyMenor')?.value) || 0;
-      const qJubilado = parseInt(document.getElementById('qtyJubilado')?.value) || 0;
+      // Se usa textContent en lugar de value para obtener las cantidades
+      const qMayor = parseInt(document.getElementById('qtyMayor')?.textContent) || 0;
+      const qMenor = parseInt(document.getElementById('qtyMenor')?.textContent) || 0;
+      const qJubilado = parseInt(document.getElementById('qtyJubilado')?.textContent) || 0;
       const totalTicketsIngresados = qMayor + qMenor + qJubilado;
 
       if (totalTicketsIngresados !== selected.length) {
