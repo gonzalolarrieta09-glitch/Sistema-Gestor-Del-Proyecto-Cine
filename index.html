@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="./styles.css">
   
   <style>
+    /* Estilos específicos del Hero que dependen de imágenes relativas */
     .hero-paisajes {
       position: relative; height: 380px; overflow: hidden;
       display: flex; align-items: center; justify-content: center;
@@ -23,91 +24,6 @@
       background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.7));
     }
     .hero-paisajes .hero-content { position: relative; z-index: 2; text-align: center; color: #fff; padding: 0 20px; }
-
-    /* Banner de Promos en cartelera */
-    .promo-banner {
-      background: linear-gradient(90deg, #e50914, #ff4b2b);
-      color: white;
-      text-align: center;
-      padding: 15px;
-      font-size: 1.2rem;
-      font-weight: bold;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      display: none;
-      animation: aparecer 0.5s ease;
-    }
-    @keyframes aparecer {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    /* Botones de Horarios */
-    .showtimes-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
-    .time-btn { background-color: #333; color: white; border: 1px solid #555; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: all 0.3s; }
-    .time-btn:hover { background-color: #e50914; border-color: #e50914; }
-
-    /* Filtros de Búsqueda */
-    .filters-container {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .filters-container input, .filters-container select {
-      padding: 10px 15px;
-      border-radius: 5px;
-      border: 1px solid #444;
-      background: #222;
-      color: white;
-      font-size: 1rem;
-    }
-    .filters-container input:focus, .filters-container select:focus {
-      outline: none;
-      border-color: #e50914;
-    }
-
-    /* Modal de Promociones */
-    .promo-list { list-style: none; padding: 0; margin-bottom: 20px; text-align: left; }
-    .promo-list li { background: #222; margin: 10px 0; padding: 15px; border-left: 4px solid #e50914; border-radius: 4px; color: #ddd; }
-    .promo-list li strong { color: #fff; }
-    
-    .coupon-box { background: #111; border: 1px dashed #e50914; padding: 15px; text-align: center; margin-bottom: 20px; border-radius: 4px; }
-    .btn-coupon, .btn-ahorro { background: #e50914; color: white; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; border-radius: 4px; width: 100%; margin-top: 10px; transition: 0.3s; font-size: 1rem; }
-    .btn-ahorro { background: #28a745; margin-top: 0; }
-    .btn-coupon:hover { background: #b0060e; }
-    .btn-ahorro:hover { background: #1e7e34; }
-
-    /* Comprobante de Venta y Tipo de Entrada */
-    .receipt-content {
-      background: #fdfdfd;
-      color: #111;
-      font-family: 'Courier New', Courier, monospace;
-      max-width: 400px;
-      padding: 25px;
-      border: 1px solid #ccc;
-      box-shadow: 0px 5px 15px rgba(0,0,0,0.5);
-    }
-    .receipt-header {
-      text-align: center;
-      border-bottom: 2px dashed #666;
-      padding-bottom: 15px;
-      margin-bottom: 15px;
-    }
-    .receipt-header h3 { margin: 0; color: #000; font-size: 1.5rem; }
-    .receipt-header p { margin: 5px 0 0 0; font-size: 0.9rem; color: #555; }
-    .receipt-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
-    .receipt-divider { border-top: 1px dashed #666; margin: 15px 0; }
-    .receipt-total { font-size: 1.3rem; font-weight: bold; text-align: right; margin-top: 10px; }
-    
-    .ticket-type-container {
-      margin: 20px 0;
-      text-align: left;
-      background: #222;
-      padding: 15px;
-      border-radius: 8px;
-    }
   </style>
 </head>
 <body>
@@ -248,25 +164,35 @@
         <div class="legend-item"><div class="legend-dot" style="background: #e50914;"></div> Seleccionado</div>
       </div>
 
-      <!-- Selector Vertical por Cantidades -->
-      <div class="ticket-type-container">
-        <p style="margin-bottom: 12px; text-align: center; color: var(--accent-gold);">
-          <strong>Asigná tus entradas (Butacas seleccionadas: <span id="countSelectedSeats" style="color: #fff;">0</span>):</strong>
-        </p>
+      <!-- Selector de Cantidades Adaptado a styles.css -->
+      <div class="ticket-counters">
+        <h4>Asigná tus entradas (Butacas seleccionadas: <span id="countSelectedSeats" style="color: #fff;">0</span>)</h4>
         
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #181b23; padding: 8px 12px; border-radius: 4px;">
+        <div class="counter-row">
           <span style="font-size: 0.9rem;">General / Mayor ($6.000)</span>
-          <input type="number" id="qtyMayor" value="0" min="0" style="width: 60px; background: #111; color: white; border: 1px solid #555; padding: 5px; text-align: center; border-radius: 4px; font-weight: bold;">
+          <div class="counter-controls">
+            <button class="btn-counter btn-minus" data-target="qtyMayor">-</button>
+            <span class="counter-value" id="qtyMayor">0</span>
+            <button class="btn-counter btn-plus" data-target="qtyMayor">+</button>
+          </div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #181b23; padding: 8px 12px; border-radius: 4px;">
+        <div class="counter-row">
           <span style="font-size: 0.9rem;">Menor de 16 años ($4.500)</span>
-          <input type="number" id="qtyMenor" value="0" min="0" style="width: 60px; background: #111; color: white; border: 1px solid #555; padding: 5px; text-align: center; border-radius: 4px; font-weight: bold;">
+          <div class="counter-controls">
+            <button class="btn-counter btn-minus" data-target="qtyMenor">-</button>
+            <span class="counter-value" id="qtyMenor">0</span>
+            <button class="btn-counter btn-plus" data-target="qtyMenor">+</button>
+          </div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; background: #181b23; padding: 8px 12px; border-radius: 4px;">
+        <div class="counter-row">
           <span style="font-size: 0.9rem;">Jubilado ($3.000)</span>
-          <input type="number" id="qtyJubilado" value="0" min="0" style="width: 60px; background: #111; color: white; border: 1px solid #555; padding: 5px; text-align: center; border-radius: 4px; font-weight: bold;">
+          <div class="counter-controls">
+            <button class="btn-counter btn-minus" data-target="qtyJubilado">-</button>
+            <span class="counter-value" id="qtyJubilado">0</span>
+            <button class="btn-counter btn-plus" data-target="qtyJubilado">+</button>
+          </div>
         </div>
       </div>
 
@@ -295,14 +221,13 @@
       
       <div class="receipt-divider"></div>
       
-      <!-- Contenedor vertical para listar los tipos de tickets uno abajo del otro -->
+      <!-- Contenedor vertical para listar los tipos de tickets -->
       <div id="recTiposContainer"></div>
       
       <div class="receipt-row" style="margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 8px;">
         <span>Cant. Total Entradas:</span> <strong id="recCant"></strong>
       </div>
       
-      <!-- Fila para indicar si aplicó descuento -->
       <div class="receipt-row" id="filaDescuento" style="display:none; color:#e50914;">
         <span>Promo Aplicada:</span> <strong id="recPromo"></strong>
       </div>
@@ -317,7 +242,6 @@
     <p>© 2026 CineNova. Todos los derechos reservados.</p>
   </footer>
 
-  <!-- SCRIPT INTEGRADO Y ACTUALIZADO -->
   <script>
     function calcularTotalTicket(preciosArticulos, diaDeLaSemana) {
       if (!preciosArticulos || preciosArticulos.length === 0) return 0;
@@ -338,7 +262,6 @@
       } else {
         total = subtotal;
       }
-
       return total;
     }
 
@@ -415,7 +338,7 @@
         }
       }
 
-      // 4. FUNCIÓN PARA ACTUALIZAR PELÍCULAS SEGÚN EL DÍA Y APLICAR FILTROS
+      // 4. FUNCIÓN PARA ACTUALIZAR PELÍCULAS SEGÚN EL DÍA
       function actualizarCartelera(boton = document.querySelector('.date-btn.active')) {
         if(!boton) return;
         
@@ -517,14 +440,12 @@
             window.location.href = './login.html';
             return; 
           }
-
           let cuponAleatorio = cupones[Math.floor(Math.random() * cupones.length)];
           if (couponResult) couponResult.textContent = cuponAleatorio;
           
           navigator.clipboard.writeText(cuponAleatorio).then(() => {
             alert(`¡Felicidades! Tu código ${cuponAleatorio} se copió al portapapeles.`);
           });
-
           btnGenerateCoupon.textContent = "Cupón Generado ✔️";
           btnGenerateCoupon.style.backgroundColor = "#28a745";
           btnGenerateCoupon.disabled = true;
@@ -585,13 +506,10 @@
         if (!seatsContainer) return;
         seatsContainer.innerHTML = '';
 
-        // Resetear cantidades
-        const qMayor = document.getElementById('qtyMayor');
-        const qMenor = document.getElementById('qtyMenor');
-        const qJubilado = document.getElementById('qtyJubilado');
-        if(qMayor) qMayor.value = 0;
-        if(qMenor) qMenor.value = 0;
-        if(qJubilado) qJubilado.value = 0;
+        // Resetear contadores de tickets
+        document.getElementById('qtyMayor').textContent = '0';
+        document.getElementById('qtyMenor').textContent = '0';
+        document.getElementById('qtyJubilado').textContent = '0';
 
         rowsData.forEach(r => {
           const rowDiv = document.createElement('div');
@@ -645,6 +563,24 @@
         if (countSpan) countSpan.textContent = selected.length;
       }
 
+      // Lógica de botones + y - para las entradas
+      document.querySelectorAll('.btn-plus').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const targetId = e.target.getAttribute('data-target');
+          const span = document.getElementById(targetId);
+          span.textContent = parseInt(span.textContent) + 1;
+        });
+      });
+
+      document.querySelectorAll('.btn-minus').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const targetId = e.target.getAttribute('data-target');
+          const span = document.getElementById(targetId);
+          let val = parseInt(span.textContent);
+          if (val > 0) span.textContent = val - 1;
+        });
+      });
+
       if (closeTicket && ticketModal) closeTicket.addEventListener('click', () => ticketModal.classList.remove('open'));
       if (ticketModal) ticketModal.addEventListener('click', (e) => { if(e.target === ticketModal) ticketModal.classList.remove('open'); });
 
@@ -662,13 +598,13 @@
             return;
           }
 
-          const qMayor = parseInt(document.getElementById('qtyMayor')?.value) || 0;
-          const qMenor = parseInt(document.getElementById('qtyMenor')?.value) || 0;
-          const qJubilado = parseInt(document.getElementById('qtyJubilado')?.value) || 0;
+          const qMayor = parseInt(document.getElementById('qtyMayor').textContent) || 0;
+          const qMenor = parseInt(document.getElementById('qtyMenor').textContent) || 0;
+          const qJubilado = parseInt(document.getElementById('qtyJubilado').textContent) || 0;
           const totalTicketsIngresados = qMayor + qMenor + qJubilado;
 
           if (totalTicketsIngresados !== selected.length) {
-            alert(`⚠️ La cantidad total de entradas ingresadas (${totalTicketsIngresados}) no coincide con el número de butacas seleccionadas (${selected.length}). Por favor ajustá los números.`);
+            alert(`⚠️ La cantidad total de entradas ingresadas (${totalTicketsIngresados}) no coincide con el número de butacas seleccionadas (${selected.length}). Por favor ajustá los números con los botones de + y -.`);
             return;
           }
 
@@ -697,7 +633,7 @@
           setVal('recButacas', butacasIds.join(', '));
           setVal('recCant', selected.length);
 
-          // Renderizar los tipos de entrada uno abajo del otro en el comprobante con su cantidad
+          // Renderizar los tipos de entrada uno abajo del otro en el comprobante
           const recTiposContainer = document.getElementById('recTiposContainer');
           if (recTiposContainer) {
             recTiposContainer.innerHTML = '';
@@ -739,7 +675,7 @@
         });
       }
 
-      // 8. LOGIN SUPERIOR
+      // 8. CÓDIGO DE LOGIN FINAL COMPLETADO
       const btnLogin = document.getElementById('btnLogin');
       
       function actualizarBotonLogin() {
@@ -749,23 +685,20 @@
             btnLogin.style.backgroundColor = "#28a745";
           } else {
             btnLogin.textContent = "Iniciar Sesión";
-            btnLogin.style.backgroundColor = "#e50914";
+            btnLogin.style.backgroundColor = "var(--accent-red)";
           }
         }
       }
+      
       actualizarBotonLogin();
       
       if (btnLogin) {
         btnLogin.addEventListener('click', () => {
-          if (!usuarioActivo) {
-            window.location.href = './login.html';
+          if (usuarioActivo) {
+            alert("Redirigiendo a tu perfil...");
           } else {
-            if (confirm("Sesión activa: " + usuarioActivo + "\n¿Deseas cerrar sesión?")) {
-              localStorage.removeItem('usuario_activo');
-              usuarioActivo = null;
-              actualizarBotonLogin();
-              alert("Sesión cerrada.");
-            }
+            // Asume que tienes un login.html, podés cambiarlo a tu lógica
+            window.location.href = './login.html';
           }
         });
       }
