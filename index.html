@@ -8,6 +8,22 @@
   
   <!-- ESTILOS AGREGADOS PARA LAS NUEVAS FUNCIONES Y FILTROS -->
   <style>
+    .hero-paisajes {
+  position: relative; height: 380px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: #111; /* por si falta alguna imagen */
+}
+.hero-slide {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0; transition: opacity 1.2s ease;
+}
+.hero-slide.active { opacity: 1; }
+.hero-paisajes::after { /* oscurece para que se lea el texto */
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.7));
+}
+.hero-paisajes .hero-content { position: relative; z-index: 2; text-align: center; color: #fff; padding: 0 20px; }
     /* Banner de Promos en cartelera */
     .promo-banner {
       background: linear-gradient(90deg, #e50914, #ff4b2b);
