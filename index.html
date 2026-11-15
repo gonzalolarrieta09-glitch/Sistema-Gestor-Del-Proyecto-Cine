@@ -103,19 +103,10 @@
     
     .ticket-type-container {
       margin: 20px 0;
-      text-align: center;
+      text-align: left;
       background: #222;
       padding: 15px;
       border-radius: 8px;
-    }
-    .ticket-type-container select {
-      background: #111;
-      color: white;
-      padding: 8px 15px;
-      border: 1px solid #555;
-      border-radius: 4px;
-      font-size: 1rem;
-      margin-left: 10px;
     }
   </style>
 </head>
@@ -257,14 +248,26 @@
         <div class="legend-item"><div class="legend-dot" style="background: #e50914;"></div> Seleccionado</div>
       </div>
 
-      <!-- Selector de Tipo de Entrada -->
+      <!-- Selector Vertical por Cantidades -->
       <div class="ticket-type-container">
-        <label for="tipoEntrada"><strong>Tipo de Entrada:</strong></label>
-        <select id="tipoEntrada">
-          <option value="mayor">General / Mayor ($6.000)</option>
-          <option value="menor">Menor de 16 años ($4.500)</option>
-          <option value="jubilado">Jubilado ($3.000)</option>
-        </select>
+        <p style="margin-bottom: 12px; text-align: center; color: var(--accent-gold);">
+          <strong>Asigná tus entradas (Butacas seleccionadas: <span id="countSelectedSeats" style="color: #fff;">0</span>):</strong>
+        </p>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #181b23; padding: 8px 12px; border-radius: 4px;">
+          <span style="font-size: 0.9rem;">General / Mayor ($6.000)</span>
+          <input type="number" id="qtyMayor" value="0" min="0" style="width: 60px; background: #111; color: white; border: 1px solid #555; padding: 5px; text-align: center; border-radius: 4px; font-weight: bold;">
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; background: #181b23; padding: 8px 12px; border-radius: 4px;">
+          <span style="font-size: 0.9rem;">Menor de 16 años ($4.500)</span>
+          <input type="number" id="qtyMenor" value="0" min="0" style="width: 60px; background: #111; color: white; border: 1px solid #555; padding: 5px; text-align: center; border-radius: 4px; font-weight: bold;">
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #181b23; padding: 8px 12px; border-radius: 4px;">
+          <span style="font-size: 0.9rem;">Jubilado ($3.000)</span>
+          <input type="number" id="qtyJubilado" value="0" min="0" style="width: 60px; background: #111; color: white; border: 1px solid #555; padding: 5px; text-align: center; border-radius: 4px; font-weight: bold;">
+        </div>
       </div>
 
       <button class="btn-confirmar" id="btnConfirmar">Confirmar Selección y Comprar</button>
@@ -292,8 +295,12 @@
       
       <div class="receipt-divider"></div>
       
-      <div class="receipt-row"><span>Tipo de Ticket:</span> <strong id="recTipo"></strong></div>
-      <div class="receipt-row"><span>Cant. Entradas:</span> <strong id="recCant"></strong></div>
+      <!-- Contenedor vertical para listar los tipos de tickets uno abajo del otro -->
+      <div id="recTiposContainer"></div>
+      
+      <div class="receipt-row" style="margin-top: 8px; border-top: 1px dashed #ccc; padding-top: 8px;">
+        <span>Cant. Total Entradas:</span> <strong id="recCant"></strong>
+      </div>
       
       <!-- Fila para indicar si aplicó descuento -->
       <div class="receipt-row" id="filaDescuento" style="display:none; color:#e50914;">
@@ -312,7 +319,6 @@
 
   <!-- SCRIPT INTEGRADO Y ACTUALIZADO -->
   <script>
-    // Función para calcular descuentos (Martes 2x1 / Miércoles 50% OFF)
     function calcularTotalTicket(preciosArticulos, diaDeLaSemana) {
       if (!preciosArticulos || preciosArticulos.length === 0) return 0;
       
@@ -337,7 +343,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      
       // 1. CARRUSEL HERO AUTOMÁTICO
       const slides = document.querySelectorAll('.hero-slide');
       if (slides.length > 0) {
@@ -352,7 +357,6 @@
       // 2. SISTEMA DE LOGIN INICIAL
       let usuarioActivo = localStorage.getItem('usuario_activo');
       
-      // CONFIGURACIÓN DE LA CARTELERA (Actualizado con INCAA y Salas)
       const carteleraInfo = {
         "Puan": { 
           diasPermitidos: [0, 1, 2, 3, 4, 5, 6], 
@@ -384,17 +388,10 @@
         }
       };
 
-      // Precios de Entradas
       const preciosEntradas = {
         "mayor": 6000,
         "menor": 4500,
         "jubilado": 3000
-      };
-
-      const nombresEntradas = {
-        "mayor": "General / Mayor",
-        "menor": "Menor (hasta 12a)",
-        "jubilado": "Jubilado"
       };
 
       let seleccionFinal = { pelicula: "", fecha: "", hora: "" };
@@ -456,14 +453,12 @@
           if (!contenedorHorarios) return;
           contenedorHorarios.innerHTML = '';
 
-          // Lógica de filtrado
           const coincideBusqueda = titulo.toLowerCase().includes(searchTerm);
           const coincideCategoria = selectedCategory === 'all' || categorias.includes(selectedCategory);
           const estaDisponibleElDia = infoPeli && infoPeli.diasPermitidos.includes(numDia);
 
           if (coincideBusqueda && coincideCategoria && estaDisponibleElDia) {
             card.style.display = "flex"; 
-            
             let horariosAMostrar = esFinde ? infoPeli.horariosFinde : infoPeli.horariosSemana;
             
             horariosAMostrar.forEach(hora => {
@@ -483,7 +478,6 @@
         });
       }
 
-      // Inicializar cartelera y agregar listeners de filtros
       actualizarCartelera(document.getElementById('day-0'));
 
       dateBtns.forEach(btn => {
@@ -492,13 +486,12 @@
         });
       });
 
+      const searchInput = document.getElementById('searchInput');
+      const categoryFilter = document.getElementById('categoryFilter');
       if (searchInput) searchInput.addEventListener('input', () => actualizarCartelera());
       if (categoryFilter) categoryFilter.addEventListener('change', () => actualizarCartelera());
 
-
-      // ==========================================
-      // 5. FUNCIONALIDAD: MODAL PROMOCIONES
-      // ==========================================
+      // 5. MODAL PROMOCIONES
       const navPromos = document.getElementById('navPromos');
       const promoModal = document.getElementById('promoModal');
       const closePromo = document.getElementById('closePromo');
@@ -513,7 +506,6 @@
       if (closePromo && promoModal) closePromo.addEventListener('click', () => promoModal.classList.remove('open'));
       if (promoModal) promoModal.addEventListener('click', (e) => { if(e.target === promoModal) promoModal.classList.remove('open'); });
 
-      // Generador de Cupón Sorpresa
       const btnGenerateCoupon = document.getElementById('btnGenerateCoupon');
       const couponResult = document.getElementById('couponResult');
       const cupones = ['NOVA20', 'POCHOCLOSFREE', 'CINE50', 'VIPUPGRADE', 'SUPERNOVA10'];
@@ -530,7 +522,7 @@
           if (couponResult) couponResult.textContent = cuponAleatorio;
           
           navigator.clipboard.writeText(cuponAleatorio).then(() => {
-            alert(`¡Felicidades! Tu código ${cuponAleatorio} se copió al portapapeles. ¡Mostralo en la boletería!`);
+            alert(`¡Felicidades! Tu código ${cuponAleatorio} se copió al portapapeles.`);
           });
 
           btnGenerateCoupon.textContent = "Cupón Generado ✔️";
@@ -558,8 +550,7 @@
         });
       }
 
-
-      // 6. PREPARAR COMPRA Y ABRIR MODAL TICKETS
+      // 6. PREPARAR COMPRA Y MODAL DE BUTACAS
       const ticketModal = document.getElementById('ticketModal');
       const modalTitle = document.getElementById('modalMovieTitle');
       const closeTicket = document.getElementById('closeTicket');
@@ -580,7 +571,6 @@
         if (ticketModal) ticketModal.classList.add('open');
       }
 
-      // Sistema de butacas profesional: 6 filas (A a F) con bloques laterales y alfanuméricos (1 al 8 por fila)
       const seatsContainer = document.getElementById('seatsContainer');
       const rowsData = [
         { row: 'A', left: ['1A', '2A', '3A', '4A'], right: ['5A', '6A', '7A', '8A'] },
@@ -594,6 +584,15 @@
       function renderSeats() {
         if (!seatsContainer) return;
         seatsContainer.innerHTML = '';
+
+        // Resetear cantidades
+        const qMayor = document.getElementById('qtyMayor');
+        const qMenor = document.getElementById('qtyMenor');
+        const qJubilado = document.getElementById('qtyJubilado');
+        if(qMayor) qMayor.value = 0;
+        if(qMenor) qMenor.value = 0;
+        if(qJubilado) qJubilado.value = 0;
+
         rowsData.forEach(r => {
           const rowDiv = document.createElement('div');
           rowDiv.className = 'seat-row';
@@ -609,7 +608,10 @@
             let s = document.createElement('button'); 
             s.className = 'seat'; 
             s.textContent = n; 
-            s.addEventListener('click', () => s.classList.toggle('selected')); 
+            s.addEventListener('click', () => {
+              s.classList.toggle('selected');
+              actualizarContadorButacas();
+            }); 
             leftBlock.appendChild(s); 
           });
           rowDiv.appendChild(leftBlock);
@@ -624,20 +626,29 @@
             let s = document.createElement('button'); 
             s.className = 'seat'; 
             s.textContent = n; 
-            s.addEventListener('click', () => s.classList.toggle('selected')); 
+            s.addEventListener('click', () => {
+              s.classList.toggle('selected');
+              actualizarContadorButacas();
+            }); 
             rightBlock.appendChild(s); 
           });
           rowDiv.appendChild(rightBlock);
           
           seatsContainer.appendChild(rowDiv);
         });
+        actualizarContadorButacas();
+      }
+
+      function actualizarContadorButacas() {
+        const selected = document.querySelectorAll('.seat.selected');
+        const countSpan = document.getElementById('countSelectedSeats');
+        if (countSpan) countSpan.textContent = selected.length;
       }
 
       if (closeTicket && ticketModal) closeTicket.addEventListener('click', () => ticketModal.classList.remove('open'));
       if (ticketModal) ticketModal.addEventListener('click', (e) => { if(e.target === ticketModal) ticketModal.classList.remove('open'); });
 
-
-      // 7. CONFIRMAR COMPRA Y GENERAR COMPROBANTE
+      // 7. CONFIRMAR COMPRA Y GENERAR COMPROBANTE VERTICAL
       const btnConfirmar = document.getElementById('btnConfirmar');
       const receiptModal = document.getElementById('receiptModal');
       const btnCerrarRecibo = document.getElementById('btnCerrarRecibo');
@@ -651,46 +662,70 @@
             return;
           }
 
+          const qMayor = parseInt(document.getElementById('qtyMayor')?.value) || 0;
+          const qMenor = parseInt(document.getElementById('qtyMenor')?.value) || 0;
+          const qJubilado = parseInt(document.getElementById('qtyJubilado')?.value) || 0;
+          const totalTicketsIngresados = qMayor + qMenor + qJubilado;
+
+          if (totalTicketsIngresados !== selected.length) {
+            alert(`⚠️ La cantidad total de entradas ingresadas (${totalTicketsIngresados}) no coincide con el número de butacas seleccionadas (${selected.length}). Por favor ajustá los números.`);
+            return;
+          }
+
           const numVenta = Math.floor(Math.random() * 90000000) + 10000000;
           const numFuncion = Math.floor(Math.random() * 9000) + 1000;
           const peliData = carteleraInfo[seleccionFinal.pelicula];
           
-          const tipoEntradaSelect = document.getElementById('tipoEntrada');
-          const tipoSeleccionado = tipoEntradaSelect ? tipoEntradaSelect.value : 'mayor';
-          const precioUnitario = preciosEntradas[tipoSeleccionado];
-          const cantidadEntradas = selected.length;
-          
-          const preciosArticulos = Array(cantidadEntradas).fill(precioUnitario);
+          let preciosArticulos = [];
+          for(let i=0; i<qMayor; i++) preciosArticulos.push(preciosEntradas.mayor);
+          for(let i=0; i<qMenor; i++) preciosArticulos.push(preciosEntradas.menor);
+          for(let i=0; i<qJubilado; i++) preciosArticulos.push(preciosEntradas.jubilado);
+
           const diaDeLaSemana = seleccionFinal.fecha.split(' ')[0];
           const precioTotal = calcularTotalTicket(preciosArticulos, diaDeLaSemana);
           
           let butacasIds = [];
           selected.forEach(s => butacasIds.push(s.textContent));
 
-          document.getElementById('recVenta').textContent = numVenta;
-          document.getElementById('recFuncion').textContent = numFuncion;
-          document.getElementById('recFecha').textContent = `${seleccionFinal.fecha} - ${seleccionFinal.hora}hs`;
-          document.getElementById('recPeli').textContent = seleccionFinal.pelicula;
-          document.getElementById('recClasif').textContent = peliData.clasificacion;
-          document.getElementById('recSala').textContent = peliData.sala;
-          document.getElementById('recButacas').textContent = butacasIds.join(', ');
-          document.getElementById('recTipo').textContent = nombresEntradas[tipoSeleccionado];
-          document.getElementById('recCant').textContent = cantidadEntradas;
+          const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+          setVal('recVenta', numVenta);
+          setVal('recFuncion', numFuncion);
+          setVal('recFecha', `${seleccionFinal.fecha} - ${seleccionFinal.hora}hs`);
+          setVal('recPeli', seleccionFinal.pelicula);
+          setVal('recClasif', peliData.clasificacion);
+          setVal('recSala', peliData.sala);
+          setVal('recButacas', butacasIds.join(', '));
+          setVal('recCant', selected.length);
+
+          // Renderizar los tipos de entrada uno abajo del otro en el comprobante con su cantidad
+          const recTiposContainer = document.getElementById('recTiposContainer');
+          if (recTiposContainer) {
+            recTiposContainer.innerHTML = '';
+            if (qMayor > 0) {
+              recTiposContainer.innerHTML += `<div class="receipt-row"><span>General / Mayor x${qMayor}:</span> <strong>$${(qMayor * preciosEntradas.mayor).toLocaleString('es-AR')}</strong></div>`;
+            }
+            if (qMenor > 0) {
+              recTiposContainer.innerHTML += `<div class="receipt-row"><span>Menor de 16 años x${qMenor}:</span> <strong>$${(qMenor * preciosEntradas.menor).toLocaleString('es-AR')}</strong></div>`;
+            }
+            if (qJubilado > 0) {
+              recTiposContainer.innerHTML += `<div class="receipt-row"><span>Jubilado x${qJubilado}:</span> <strong>$${(qJubilado * preciosEntradas.jubilado).toLocaleString('es-AR')}</strong></div>`;
+            }
+          }
           
           const filaDescuento = document.getElementById('filaDescuento');
           if (filaDescuento) {
             if (diaDeLaSemana.toLowerCase() === 'martes') {
               filaDescuento.style.display = 'flex';
-              document.getElementById('recPromo').textContent = 'Martes 2x1';
+              setVal('recPromo', 'Martes 2x1 aplicado');
             } else if (diaDeLaSemana.toLowerCase() === 'miércoles' || diaDeLaSemana.toLowerCase() === 'miercoles') {
               filaDescuento.style.display = 'flex';
-              document.getElementById('recPromo').textContent = 'Miércoles 50% OFF';
+              setVal('recPromo', 'Miércoles 50% OFF aplicado');
             } else {
               filaDescuento.style.display = 'none';
             }
           }
 
-          document.getElementById('recTotal').textContent = precioTotal.toLocaleString('es-AR');
+          setVal('recTotal', precioTotal.toLocaleString('es-AR'));
 
           if (ticketModal) ticketModal.classList.remove('open');
           if (receiptModal) receiptModal.classList.add('open');
@@ -704,8 +739,7 @@
         });
       }
 
-
-      // 8. SISTEMA DE BOTÓN DE LOGIN SUPERIOR
+      // 8. LOGIN SUPERIOR
       const btnLogin = document.getElementById('btnLogin');
       
       function actualizarBotonLogin() {
