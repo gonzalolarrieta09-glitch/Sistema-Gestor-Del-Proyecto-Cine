@@ -160,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const preciosEntradas = { "mayor": 6000, "menor": 4500, "jubilado": 3000 };
-  const nombresEntradas = { "mayor": "General / Mayor", "menor": "Menor (hasta 12a)", "jubilado": "Jubilado" };
   let seleccionFinal = { pelicula: "", fecha: "", hora: "" };
 
   // Sincronizar los 7 botones de días
@@ -177,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.textContent = `${diasSemana[numDiaSemana]} ${fecha.getDate()} ${mesesAnio[fecha.getMonth()]}`;
       btn.dataset.numeroDiaSemana = numDiaSemana;
       btn.dataset.textoFecha = btn.textContent;
-      btn.dataset.fechaValor = fecha.toISOString().split('T')[0];
     }
   }
 
@@ -273,6 +271,15 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderSeats() {
     if (!seatsContainer) return;
     seatsContainer.innerHTML = '';
+
+    // Resetear inputs de cantidades al abrir el modal
+    const qMayor = document.getElementById('qtyMayor');
+    const qMenor = document.getElementById('qtyMenor');
+    const qJubilado = document.getElementById('qtyJubilado');
+    if(qMayor) qMayor.value = 0;
+    if(qMenor) qMenor.value = 0;
+    if(qJubilado) qJubilado.value = 0;
+
     rowsData.forEach(r => {
       const rowDiv = document.createElement('div');
       rowDiv.className = 'seat-row';
@@ -291,6 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
         seat.textContent = seatNum;
         seat.addEventListener('click', () => {
           seat.classList.toggle('selected');
+          actualizarContadorButacas();
         });
         leftBlock.appendChild(seat);
       });
@@ -310,6 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
         seat.textContent = seatNum;
         seat.addEventListener('click', () => {
           seat.classList.toggle('selected');
+          actualizarContadorButacas();
         });
         rightBlock.appendChild(seat);
       });
@@ -317,6 +326,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
       seatsContainer.appendChild(rowDiv);
     });
+    actualizarContadorButacas();
+  }
+
+  function actualizarContadorButacas() {
+    const selected = document.querySelectorAll('.seat.selected');
+    const countSpan = document.getElementById('countSelectedSeats');
+    if (countSpan) countSpan.textContent = selected.length;
   }
 
   function prepararCompra(titulo, fecha, hora) {
@@ -358,16 +374,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      const qMayor = parseInt(document.getElementById('qtyMayor')?.value) || 0;
+      const qMenor = parseInt(document.getElementById('qtyMenor')?.value) || 0;
+      const qJubilado = parseInt(document.getElementById('qtyJubilado')?.value) || 0;
+      const totalTicketsIngresados = qMayor + qMenor + qJubilado;
+
+      if (totalTicketsIngresados !== selected.length) {
+        alert(`⚠️ La cantidad total de entradas ingresadas (${totalTicketsIngresados}) no coincide con el número de butacas seleccionadas (${selected.length}). Por favor ajustá los números.`);
+        return;
+      }
+
       const numVenta = Math.floor(Math.random() * 90000000) + 10000000;
       const numFuncion = Math.floor(Math.random() * 9000) + 1000;
       const peliData = carteleraInfo[seleccionFinal.pelicula];
       
-      const tipoEntradaSelect = document.getElementById('tipoEntrada');
-      const tipoSeleccionado = tipoEntradaSelect ? tipoEntradaSelect.value : 'mayor';
-      const precioUnitario = preciosEntradas[tipoSeleccionado];
-      const cantidadEntradas = selected.length;
-      
-      const preciosArticulos = Array(cantidadEntradas).fill(precioUnitario);
+      let preciosArticulos = [];
+      for(let i=0; i<qMayor; i++) preciosArticulos.push(preciosEntradas.mayor);
+      for(let i=0; i<qMenor; i++) preciosArticulos.push(preciosEntradas.menor);
+      for(let i=0; i<qJubilado; i++) preciosArticulos.push(preciosEntradas.jubilado);
+
       const diaDeLaSemana = seleccionFinal.fecha.split(' ')[0];
       const precioTotal = calcularTotalTicket(preciosArticulos, diaDeLaSemana);
       
@@ -382,17 +407,31 @@ document.addEventListener('DOMContentLoaded', () => {
       setVal('recClasif', peliData.clasificacion);
       setVal('recSala', peliData.sala);
       setVal('recButacas', butacasIds.join(', '));
-      setVal('recTipo', nombresEntradas[tipoSeleccionado]);
-      setVal('recCant', cantidadEntradas);
+      setVal('recCant', selected.length);
+
+      // Renderizar los tipos de entrada uno abajo del otro en el comprobante con su cantidad
+      const recTiposContainer = document.getElementById('recTiposContainer');
+      if (recTiposContainer) {
+        recTiposContainer.innerHTML = '';
+        if (qMayor > 0) {
+          recTiposContainer.innerHTML += `<div class="receipt-row"><span>General / Mayor x${qMayor}:</span> <strong>$${(qMayor * preciosEntradas.mayor).toLocaleString('es-AR')}</strong></div>`;
+        }
+        if (qMenor > 0) {
+          recTiposContainer.innerHTML += `<div class="receipt-row"><span>Menor de 16 años x${qMenor}:</span> <strong>$${(qMenor * preciosEntradas.menor).toLocaleString('es-AR')}</strong></div>`;
+        }
+        if (qJubilado > 0) {
+          recTiposContainer.innerHTML += `<div class="receipt-row"><span>Jubilado x${qJubilado}:</span> <strong>$${(qJubilado * preciosEntradas.jubilado).toLocaleString('es-AR')}</strong></div>`;
+        }
+      }
       
       const filaDescuento = document.getElementById('filaDescuento');
       if (filaDescuento) {
         if (diaDeLaSemana.toLowerCase() === 'martes') {
           filaDescuento.style.display = 'flex';
-          setVal('recPromo', 'Martes 2x1');
+          setVal('recPromo', 'Martes 2x1 aplicado');
         } else if (diaDeLaSemana.toLowerCase() === 'miércoles' || diaDeLaSemana.toLowerCase() === 'miercoles') {
           filaDescuento.style.display = 'flex';
-          setVal('recPromo', 'Miércoles 50% OFF');
+          setVal('recPromo', 'Miércoles 50% OFF aplicado');
         } else {
           filaDescuento.style.display = 'none';
         }
