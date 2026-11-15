@@ -93,16 +93,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Matriz de butacas con columnas del 1 al 7 por bloque (izquierdo y derecho)
   const rowsData = [
-    { row: 1, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-    { row: 2, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-    { row: 3, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-    { row: 4, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-    { row: 5, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-    { row: 6, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-    { row: 7, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-    { row: 8, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-    { row: 9, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-    { row: 10, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] }
+    {// 5 filas visuales (10 bloques de 7 asientos) con numeración continua y letra de la A a la J
+      const rowsData = [
+        { 
+          row: 1, 
+          left:  ['1A', '2A', '3A', '4A', '5A', '6A', '7A'], 
+          right: ['8B', '9B', '10B', '11B', '12B', '13B', '14B'] 
+        },
+        { 
+          row: 2, 
+          left:  ['15C', '16C', '17C', '18C', '19C', '20C', '21C'], 
+          right: ['22D', '23D', '24D', '25D', '26D', '27D', '28D'] 
+        },
+        { 
+          row: 3, 
+          left:  ['29E', '30E', '31E', '32E', '33E', '34E', '35E'], 
+          right: ['36F', '37F', '38F', '39F', '40F', '41F', '42F'] 
+        },
+        { 
+          row: 4, 
+          left:  ['43G', '44G', '45G', '46G', '47G', '48G', '49G'], 
+          right: ['50H', '51H', '52H', '53H', '54H', '55H', '56H'] 
+        },
+        { 
+          row: 5, 
+          left:  ['57I', '58I', '59I', '60I', '61I', '62I', '63I'], 
+          right: ['64J', '65J', '66J', '67J', '68J', '69J', '70J'] 
+        }
+      ];
   ];
 
   function renderSeats() {
