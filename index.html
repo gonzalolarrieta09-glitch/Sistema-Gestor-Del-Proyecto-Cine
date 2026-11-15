@@ -563,19 +563,14 @@
         ticketModal.classList.add('open');
       }
 
-      // 4. GENERAR ASIENTOS
+   // Sistema de butacas profesional: 5 filas (A a E) con bloques laterales y alfanuméricos
       const seatsContainer = document.getElementById('seatsContainer');
       const rowsData = [
-        { row: 1, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-        { row: 2, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-        { row: 3, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-        { row: 4, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-        { row: 5, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-        { row: 6, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-        { row: 7, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-        { row: 8, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-        { row: 9, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] },
-        { row: 10, left: [1, 2, 3, 4, 5, 6, 7], right: [1, 2, 3, 4, 5, 6, 7] }
+        { row: 'A', left: ['1A', '2A', '3A'], right: ['4A', '5A', '6A', '7A'] },
+        { row: 'B', left: ['1B', '2B', '3B'], right: ['4B', '5B', '6B', '7B'] },
+        { row: 'C', left: ['1C', '2C', '3C'], right: ['4C', '5C', '6C', '7C'] },
+        { row: 'D', left: ['1D', '2D', '3D'], right: ['4D', '5D', '6D', '7D'] },
+        { row: 'E', left: ['1E', '2E', '3E'], right: ['4E', '5E', '6E', '7E'] }
       ];
 
       function renderSeats() {
