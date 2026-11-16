@@ -109,46 +109,9 @@
       </select>
     </div>
 
-    <div class="movies-grid">
-      <!-- Película 1 -->
-      <article class="movie-card" data-title="Puan" data-category="comedia drama">
-        <img class="movie-poster" src="puan-frontal-2.jpg" alt="Puan">
-        <div class="movie-info">
-          <h3 class="movie-title">Puan</h3>
-          <p class="movie-meta">Comedia / Drama • 110 min</p>
-          <div class="showtimes-container"></div>
-        </div>
-      </article>
-
-      <!-- Película 2 -->
-      <article class="movie-card" data-title="Argentina, 1985" data-category="drama historica">
-        <img class="movie-poster" src="7b371349946b8f9db09651bcdf78c6d16f7edddd03f3c18f26d5d6194f4c3859.jpg" alt="Argentina, 1985">
-        <div class="movie-info">
-          <h3 class="movie-title">Argentina, 1985</h3>
-          <p class="movie-meta">Drama / Histórica • 140 min</p>
-          <div class="showtimes-container"></div>
-        </div>
-      </article>
-
-      <!-- Película 3 -->
-      <article class="movie-card" data-title="Trenque Lauquen" data-category="misterio romance">
-        <img class="movie-poster" src="afiche-trenque.jpg" alt="Trenque Lauquen">
-        <div class="movie-info">
-          <h3 class="movie-title">Trenque Lauquen</h3>
-          <p class="movie-meta">Misterio / Romance • 260 min</p>
-          <div class="showtimes-container"></div>
-        </div>
-      </article>
-
-      <!-- Película 4 -->
-      <article class="movie-card" data-title="Blondi" data-category="comedia drama">
-        <img class="movie-poster" src="Blondi-290102419-large.jpg" alt="Blondi">
-        <div class="movie-info">
-          <h3 class="movie-title">Blondi</h3>
-          <p class="movie-meta">Comedia dramática • 87 min</p>
-          <div class="showtimes-container"></div>
-        </div>
-      </article>
+    <!-- Contenedor vacío donde se inyectarán las películas por semana -->
+    <div class="movies-grid" id="movies-container">
+      <!-- Las películas se renderizan mediante JS -->
     </div>
   </main>
 
@@ -294,6 +257,15 @@
       return total;
     }
 
+    // Función para obtener el número de semana actual del año
+    function getWeekNumber(d) {
+      d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+      return weekNo;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       // 1. CARRUSEL HERO AUTOMÁTICO
       const slides = document.querySelectorAll('.hero-slide');
@@ -308,37 +280,79 @@
 
       // 2. SISTEMA DE LOGIN INICIAL
       let usuarioActivo = localStorage.getItem('usuario_activo');
+
+      // 3. BASE DE DATOS DE PELÍCULAS ARGENTINAS (ROTACIÓN SEMANAL)
+      const weeklyMovies = [
+        // SEMANA A (Semanas pares)
+        [
+          {
+            title: "Relatos Salvajes", category: "comedia drama", meta: "Comedia negra / Drama • 122 min", 
+            poster: "https://picsum.photos/400/600?random=11", diasPermitidos: [0, 1, 2, 3, 4, 5, 6],
+            horariosSemana: ["17:30", "20:00", "22:30"], horariosFinde: ["15:00", "18:00", "21:00", "23:45"],
+            sala: "Sala 1 (INCAA)", clasificacion: "SAM 16"
+          },
+          {
+            title: "El Secreto de sus Ojos", category: "misterio drama romance", meta: "Drama / Misterio • 129 min", 
+            poster: "https://picsum.photos/400/600?random=12", diasPermitidos: [0, 4, 5, 6],
+            horariosSemana: ["19:00"], horariosFinde: ["19:30", "22:45"],
+            sala: "Sala 2 (Atmos)", clasificacion: "SAM 13"
+          },
+          {
+            title: "Nueve Reinas", category: "misterio comedia", meta: "Policial / Comedia • 114 min", 
+            poster: "https://picsum.photos/400/600?random=13", diasPermitidos: [0, 2, 4, 6],
+            horariosSemana: ["16:00"], horariosFinde: ["15:30"],
+            sala: "Sala 1 (INCAA)", clasificacion: "SAM 13"
+          },
+          {
+            title: "Esperando la Carroza", category: "comedia", meta: "Comedia de culto • 94 min", 
+            poster: "https://picsum.photos/400/600?random=14", diasPermitidos: [1, 2, 3],
+            horariosSemana: ["18:15", "20:45"], horariosFinde: [],
+            sala: "Sala 3", clasificacion: "ATP"
+          }
+        ],
+        // SEMANA B (Semanas impares)
+        [
+          {
+            title: "Argentina, 1985", category: "drama", meta: "Drama Histórico • 140 min", 
+            poster: "https://picsum.photos/400/600?random=15", diasPermitidos: [0, 1, 2, 3, 4, 5, 6],
+            horariosSemana: ["18:00", "21:00"], horariosFinde: ["16:00", "19:00", "22:15"],
+            sala: "Sala 1 (INCAA)", clasificacion: "SAM 13"
+          },
+          {
+            title: "El Ángel", category: "drama misterio", meta: "Policial / Drama • 118 min", 
+            poster: "https://picsum.photos/400/600?random=16", diasPermitidos: [0, 4, 5, 6],
+            horariosSemana: ["20:15"], horariosFinde: ["20:30", "23:00"],
+            sala: "Sala 2 (Atmos)", clasificacion: "SAM 16"
+          },
+          {
+            title: "El Clan", category: "drama misterio", meta: "Suspenso / Drama • 110 min", 
+            poster: "https://picsum.photos/400/600?random=17", diasPermitidos: [0, 2, 4, 6],
+            horariosSemana: ["17:00"], horariosFinde: ["17:30"],
+            sala: "Sala 1 (INCAA)", clasificacion: "SAM 16"
+          },
+          {
+            title: "Puan", category: "comedia drama", meta: "Comedia dramática • 110 min", 
+            poster: "https://picsum.photos/400/600?random=18", diasPermitidos: [1, 2, 3],
+            horariosSemana: ["16:30", "19:45"], horariosFinde: [],
+            sala: "Sala 3", clasificacion: "ATP"
+          }
+        ]
+      ];
+
+      // Determinar qué semana toca y generar el diccionario de información para el ticket
+      const currentWeekIndex = getWeekNumber(new Date()) % weeklyMovies.length;
+      const peliculasActivas = weeklyMovies[currentWeekIndex];
       
-      const carteleraInfo = {
-        "Puan": { 
-          diasPermitidos: [0, 1, 2, 3, 4, 5, 6], 
-          horariosSemana: ["17:30", "20:00", "22:30"],
-          horariosFinde: ["15:00", "18:00", "21:00", "23:45"],
-          sala: "Sala 1 (INCAA)",
-          clasificacion: "ATP"
-        },
-        "Argentina, 1985": { 
-          diasPermitidos: [0, 4, 5, 6], 
-          horariosSemana: ["19:00"], 
-          horariosFinde: ["19:30", "22:45"],
-          sala: "Sala 2 (Atmos)",
-          clasificacion: "SAM 13"
-        },
-        "Trenque Lauquen": { 
-          diasPermitidos: [0, 2, 4, 6], 
-          horariosSemana: ["16:00"],
-          horariosFinde: ["15:30"],
-          sala: "Sala 1 (INCAA)",
-          clasificacion: "SAM 13"
-        },
-        "Blondi": { 
-          diasPermitidos: [1, 2, 3], 
-          horariosSemana: ["18:15", "20:45"],
-          horariosFinde: [],
-          sala: "Sala 3",
-          clasificacion: "SAM 16"
-        }
-      };
+      const carteleraInfo = {};
+      peliculasActivas.forEach(peli => {
+        carteleraInfo[peli.title] = {
+          diasPermitidos: peli.diasPermitidos,
+          horariosSemana: peli.horariosSemana,
+          horariosFinde: peli.horariosFinde,
+          sala: peli.sala,
+          clasificacion: peli.clasificacion
+        };
+      });
 
       const preciosEntradas = {
         "mayor": 6000,
@@ -348,7 +362,7 @@
 
       let seleccionFinal = { pelicula: "", fecha: "", hora: "" };
 
-      // 3. CARGAR DÍAS DE LA SEMANA
+      // 4. CARGAR DÍAS DE LA SEMANA
       const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
       const mesesAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
       const dateBtns = document.querySelectorAll('.date-btn');
@@ -367,7 +381,7 @@
         }
       }
 
-      // 4. FUNCIÓN PARA ACTUALIZAR PELÍCULAS SEGÚN EL DÍA
+      // 5. FUNCIÓN PARA ACTUALIZAR PELÍCULAS SEGÚN EL DÍA (AHORA DINÁMICA)
       function actualizarCartelera(boton = document.querySelector('.date-btn.active')) {
         if(!boton) return;
         
@@ -394,38 +408,52 @@
         const categoryFilter = document.getElementById('categoryFilter');
         const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
         const selectedCategory = categoryFilter ? categoryFilter.value.toLowerCase() : "all";
-        const peliculasDOM = document.querySelectorAll('.movie-card');
         
-        peliculasDOM.forEach(card => {
-          let titulo = card.dataset.title;
-          let categorias = card.dataset.category || "";
-          let infoPeli = carteleraInfo[titulo];
-          let contenedorHorarios = card.querySelector('.showtimes-container');
+        const container = document.getElementById('movies-container');
+        container.innerHTML = ''; // Limpiamos la grilla
+        
+        peliculasActivas.forEach(peli => {
+          const infoPeli = carteleraInfo[peli.title];
           
-          if (!contenedorHorarios) return;
-          contenedorHorarios.innerHTML = '';
-
-          const coincideBusqueda = titulo.toLowerCase().includes(searchTerm);
-          const coincideCategoria = selectedCategory === 'all' || categorias.includes(selectedCategory);
+          const coincideBusqueda = peli.title.toLowerCase().includes(searchTerm);
+          const coincideCategoria = selectedCategory === 'all' || peli.category.includes(selectedCategory);
           const estaDisponibleElDia = infoPeli && infoPeli.diasPermitidos.includes(numDia);
 
           if (coincideBusqueda && coincideCategoria && estaDisponibleElDia) {
-            card.style.display = "flex"; 
+            // Crear elemento <article>
+            const card = document.createElement('article');
+            card.className = 'movie-card';
+            card.dataset.title = peli.title;
+            card.dataset.category = peli.category;
+
             let horariosAMostrar = esFinde ? infoPeli.horariosFinde : infoPeli.horariosSemana;
             
+            // Generar contenedor interno
+            let innerHTML = `
+              <img class="movie-poster" src="${peli.poster}" alt="${peli.title}">
+              <div class="movie-info">
+                <h3 class="movie-title">${peli.title}</h3>
+                <p class="movie-meta">${peli.meta}</p>
+                <div class="showtimes-container"></div>
+              </div>
+            `;
+            card.innerHTML = innerHTML;
+
+            // Anexar horarios y eventos
+            const horariosContainer = card.querySelector('.showtimes-container');
             horariosAMostrar.forEach(hora => {
               let btnHora = document.createElement('button');
               btnHora.className = 'time-btn';
               btnHora.textContent = hora;
               
               btnHora.addEventListener('click', () => {
-                prepararCompra(titulo, boton.dataset.textoFecha, hora);
+                prepararCompra(peli.title, boton.dataset.textoFecha, hora);
               });
               
-              contenedorHorarios.appendChild(btnHora);
+              horariosContainer.appendChild(btnHora);
             });
-          } else {
-            card.style.display = "none";
+
+            container.appendChild(card);
           }
         });
       }
@@ -443,7 +471,7 @@
       if (searchInput) searchInput.addEventListener('input', () => actualizarCartelera());
       if (categoryFilter) categoryFilter.addEventListener('change', () => actualizarCartelera());
 
-      // 5. MODAL PROMOCIONES
+      // 6. MODAL PROMOCIONES
       const navPromos = document.getElementById('navPromos');
       const promoModal = document.getElementById('promoModal');
       const closePromo = document.getElementById('closePromo');
@@ -500,7 +528,7 @@
         });
       }
 
-      // 6. PREPARAR COMPRA Y MODAL DE BUTACAS
+      // 7. PREPARAR COMPRA Y MODAL DE BUTACAS
       const ticketModal = document.getElementById('ticketModal');
       const modalTitle = document.getElementById('modalMovieTitle');
       const closeTicket = document.getElementById('closeTicket');
@@ -535,7 +563,6 @@
         if (!seatsContainer) return;
         seatsContainer.innerHTML = '';
 
-        // Resetear contadores de tickets
         document.getElementById('qtyMayor').textContent = '0';
         document.getElementById('qtyMenor').textContent = '0';
         document.getElementById('qtyJubilado').textContent = '0';
@@ -592,7 +619,6 @@
         if (countSpan) countSpan.textContent = selected.length;
       }
 
-      // Lógica de botones + y - para las entradas
       document.querySelectorAll('.btn-plus').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const targetId = e.target.getAttribute('data-target');
@@ -613,7 +639,7 @@
       if (closeTicket && ticketModal) closeTicket.addEventListener('click', () => ticketModal.classList.remove('open'));
       if (ticketModal) ticketModal.addEventListener('click', (e) => { if(e.target === ticketModal) ticketModal.classList.remove('open'); });
 
-      // 7. CONFIRMAR COMPRA Y GENERAR COMPROBANTE VERTICAL
+      // 8. CONFIRMAR COMPRA Y GENERAR COMPROBANTE
       const btnConfirmar = document.getElementById('btnConfirmar');
       const receiptModal = document.getElementById('receiptModal');
       const btnCerrarRecibo = document.getElementById('btnCerrarRecibo');
@@ -662,7 +688,6 @@
           setVal('recButacas', butacasIds.join(', '));
           setVal('recCant', selected.length);
 
-          // Renderizar los tipos de entrada uno abajo del otro en el comprobante
           const recTiposContainer = document.getElementById('recTiposContainer');
           if (recTiposContainer) {
             recTiposContainer.innerHTML = '';
@@ -704,7 +729,7 @@
         });
       }
 
-      // 8. CÓDIGO DE LOGIN FINAL COMPLETADO
+      // 9. CÓDIGO DE LOGIN FINAL
       const btnLogin = document.getElementById('btnLogin');
       
       function actualizarBotonLogin() {
@@ -726,7 +751,6 @@
           if (usuarioActivo) {
             alert("Redirigiendo a tu perfil...");
           } else {
-            // Asume que tienes un login.html, podés cambiarlo a tu lógica
             window.location.href = './login.html';
           }
         });
