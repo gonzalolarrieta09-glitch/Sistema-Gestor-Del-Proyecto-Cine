@@ -281,31 +281,31 @@
       // 2. SISTEMA DE LOGIN INICIAL
       let usuarioActivo = localStorage.getItem('usuario_activo');
 
-      // 3. BASE DE DATOS DE PELÍCULAS ARGENTINAS (ROTACIÓN SEMANAL CON IMÁGENES REALES)
+      // 3. BASE DE DATOS DE PELÍCULAS ARGENTINAS (ROTACIÓN SEMANAL CON IMÁGENES REALES - CORREGIDO)
       const weeklyMovies = [
         // SEMANA A (Semanas pares)
         [
           {
             title: "Relatos Salvajes", category: "comedia drama", meta: "Comedia negra / Drama • 122 min", 
-            poster: "https://es.web.img3.acsta.net/pictures/14/06/18/12/15/226079.jpg", diasPermitidos: [0, 1, 2, 3, 4, 5, 6],
+            poster: "https://upload.wikimedia.org/wikipedia/en/6/60/Wild_Tales_poster.jpg", diasPermitidos: [0, 1, 2, 3, 4, 5, 6],
             horariosSemana: ["17:30", "20:00", "22:30"], horariosFinde: ["15:00", "18:00", "21:00", "23:45"],
             sala: "Sala 1 (INCAA)", clasificacion: "SAM 16"
           },
           {
             title: "El Secreto de sus Ojos", category: "misterio drama romance", meta: "Drama / Misterio • 129 min", 
-            poster: "https://es.web.img3.acsta.net/medias/nmedia/18/72/06/12/19154443.jpg", diasPermitidos: [0, 4, 5, 6],
+            poster: "https://upload.wikimedia.org/wikipedia/en/9/9f/The_Secret_in_Their_Eyes_poster.jpg", diasPermitidos: [0, 4, 5, 6],
             horariosSemana: ["19:00"], horariosFinde: ["19:30", "22:45"],
             sala: "Sala 2 (Atmos)", clasificacion: "SAM 13"
           },
           {
             title: "Nueve Reinas", category: "misterio comedia", meta: "Policial / Comedia • 114 min", 
-            poster: "https://es.web.img3.acsta.net/pictures/14/04/08/09/20/409890.jpg", diasPermitidos: [0, 2, 4, 6],
+            poster: "https://upload.wikimedia.org/wikipedia/en/2/25/Nueve_reinas.jpg", diasPermitidos: [0, 2, 4, 6],
             horariosSemana: ["16:00"], horariosFinde: ["15:30"],
             sala: "Sala 1 (INCAA)", clasificacion: "SAM 13"
           },
           {
             title: "Esperando la Carroza", category: "comedia", meta: "Comedia de culto • 94 min", 
-            poster: "https://es.web.img2.acsta.net/pictures/18/10/31/17/28/5013098.jpg", diasPermitidos: [1, 2, 3],
+            poster: "https://upload.wikimedia.org/wikipedia/en/2/26/Esperando_la_carroza.jpg", diasPermitidos: [1, 2, 3],
             horariosSemana: ["18:15", "20:45"], horariosFinde: [],
             sala: "Sala 3", clasificacion: "ATP"
           }
@@ -320,13 +320,13 @@
           },
           {
             title: "El Ángel", category: "drama misterio", meta: "Policial / Drama • 118 min", 
-            poster: "https://es.web.img2.acsta.net/pictures/18/06/07/16/09/5634629.jpg", diasPermitidos: [0, 4, 5, 6],
+            poster: "https://upload.wikimedia.org/wikipedia/en/c/c2/El_Angel_poster.jpg", diasPermitidos: [0, 4, 5, 6],
             horariosSemana: ["20:15"], horariosFinde: ["20:30", "23:00"],
             sala: "Sala 2 (Atmos)", clasificacion: "SAM 16"
           },
           {
             title: "El Clan", category: "drama misterio", meta: "Suspenso / Drama • 110 min", 
-            poster: "https://es.web.img3.acsta.net/pictures/15/06/01/10/24/499097.jpg", diasPermitidos: [0, 2, 4, 6],
+            poster: "https://upload.wikimedia.org/wikipedia/en/5/52/El_Clan_poster.jpg", diasPermitidos: [0, 2, 4, 6],
             horariosSemana: ["17:00"], horariosFinde: ["17:30"],
             sala: "Sala 1 (INCAA)", clasificacion: "SAM 16"
           },
@@ -381,7 +381,7 @@
         }
       }
 
-      // 5. FUNCIÓN PARA ACTUALIZAR PELÍCULAS SEGÚN EL DÍA (AHORA DINÁMICA)
+      // 5. FUNCIÓN PARA ACTUALIZAR PELÍCULAS SEGÚN EL DÍA
       function actualizarCartelera(boton = document.querySelector('.date-btn.active')) {
         if(!boton) return;
         
