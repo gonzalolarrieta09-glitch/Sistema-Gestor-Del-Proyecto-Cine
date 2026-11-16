@@ -7,6 +7,22 @@
   <link rel="stylesheet" href="./styles.css">
   
   <style>
+    /* Estilos del Logo integrados */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #fff;
+      transition: transform 0.2s ease;
+    }
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
     /* Estilos específicos del Hero que dependen de imágenes relativas */
     .hero-paisajes {
       position: relative; height: 380px; overflow: hidden;
@@ -29,7 +45,20 @@
 <body>
 
   <header>
-    <div class="logo">Cine<span>Nova</span></div>
+    <!-- Logo SVG integrado con el texto -->
+    <div class="logo" style="display: flex; align-items: center; cursor: pointer;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e50914" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px;">
+        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+        <line x1="7" y1="2" x2="7" y2="22"></line>
+        <line x1="17" y1="2" x2="17" y2="22"></line>
+        <line x1="2" y1="12" x2="22" y2="12"></line>
+        <line x1="2" y1="7" x2="7" y2="7"></line>
+        <line x1="2" y1="17" x2="7" y2="17"></line>
+        <line x1="17" y1="17" x2="22" y2="17"></line>
+        <line x1="17" y1="7" x2="22" y2="7"></line>
+      </svg>
+      Cine<span style="color: #e50914;">Nova</span>
+    </div>
     <nav>
       <ul>
         <li><a href="#" class="active">Cartelera</a></li>
