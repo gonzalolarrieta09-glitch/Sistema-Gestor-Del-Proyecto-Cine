@@ -26,10 +26,12 @@ const poolPromise = new sql.ConnectionPool(dbConfig)
     throw error;
   });
 
-app.use('/Css', express.static(path.join(__dirname, 'Css')));
-app.use('/Java.Script', express.static(path.join(__dirname, 'Java.Script')));
-app.use('/Img', express.static(path.join(__dirname, 'Img')));
-app.use(express.static(path.join(__dirname, 'Html')));
+const projectRoot = path.join(__dirname, '..');
+
+app.use('/Css', express.static(path.join(projectRoot, 'Css')));
+app.use('/Java.Script', express.static(path.join(projectRoot, 'Java.Script')));
+app.use('/Img', express.static(path.join(projectRoot, 'Img')));
+app.use(express.static(path.join(projectRoot, 'Html')));
 
 app.get('/api/peliculas', async (req, res) => {
   try {
