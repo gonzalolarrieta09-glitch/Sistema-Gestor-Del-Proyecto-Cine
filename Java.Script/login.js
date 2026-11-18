@@ -116,37 +116,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Manejar el envío del formulario
   if (loginForm) {
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', async function(e) {
       e.preventDefault();
       errorMsg.style.display = 'none';
 
       const email = document.getElementById('loginEmail').value.trim();
       const password = document.getElementById('loginPassword').value;
 
-      if (isRegistering) {
-        if (!birthDay.value || !birthMonth.value || !birthYear.value) {
-          errorMsg.textContent = "⚠️ Por favor selecciona tu fecha de nacimiento completa.";
-          errorMsg.style.display = 'block';
-          return;
+      try {
+        if (isRegistering) {
+          if (!birthDay.value || !birthMonth.value || !birthYear.value) {
+            errorMsg.textContent = 'Por favor selecciona tu fecha de nacimiento completa.';
+            errorMsg.style.display = 'block';
+            return;
+          }
+
+          const fechaNacimiento = `${birthYear.value}-${String(birthMonth.value).padStart(2, '0')}-${String(birthDay.value).padStart(2, '0')}`;
+          const displayName = email.split('@')[0];
+
+          const response = await fetch('/api/usuarios/registro', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              nombre: displayName,
+              apellido: 'Usuario',
+              dni: `WEB-${Date.now()}`,
+              nacimiento: fechaNacimiento,
+              email,
+              password
+            })
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || 'No se pudo crear la cuenta.');
+
+          localStorage.setItem('usuario_activo', data.Nombre_Usuario);
+          localStorage.setItem('fecha_nacimiento', birthDay.value + '/' + birthMonth.value + '/' + birthYear.value);
+          localStorage.setItem('email_activo', email);
+          localStorage.setItem('id_usuario', data.ID_Usuario);
+          alert(`Cuenta creada con éxito! Bienvenido/a, ${data.Nombre_Usuario}`);
+        } else {
+          const response = await fetch('/api/usuarios/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          const data = await response.json();
+          if (!response.ok) throw new Error(data.error || 'No se pudo iniciar sesión.');
+
+          localStorage.setItem('usuario_activo', data.Nombre_Usuario);
+          localStorage.setItem('email_activo', email);
+          localStorage.setItem('id_usuario', data.ID_Usuario);
+          if (data.Nacimiento_Fecha) {
+            const fecha = new Date(data.Nacimiento_Fecha);
+            localStorage.setItem('fecha_nacimiento', fecha.toLocaleDateString('es-AR'));
+          }
         }
 
-        const fechaNacimiento = `${birthDay.value}/${birthMonth.value}/${birthYear.value}`;
-        const displayName = email.split('@')[0];
-
-        // Guardar sesión y fecha de nacimiento en el navegador
-        localStorage.setItem('usuario_activo', displayName);
-        localStorage.setItem('fecha_nacimiento', fechaNacimiento);
-        localStorage.setItem('email_activo', email);
-        alert(`¡Cuenta creada con éxito! Bienvenido/a, ${displayName}`);
-      } else {
-        // Iniciar sesión normal
-        const displayName = email.split('@')[0];
-        localStorage.setItem('usuario_activo', displayName);
-        localStorage.setItem('email_activo', email);
+        window.location.href = './index.html';
+      } catch (error) {
+        errorMsg.textContent = `⚠️ ${error.message}`;
+        errorMsg.style.display = 'block';
       }
-
-      // Redirigir de vuelta a la cartelera con ruta relativa segura
-      window.location.href = './index.html';
     });
   }
 });
