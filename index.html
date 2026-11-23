@@ -1,10 +1,11 @@
+
+     
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CineNova - Cartelera y Entradas</title>
-  <!-- RUTA CORREGIDA: Apunta a la carpeta Css en la raíz -->
   <link rel="stylesheet" href="./Css/styles.css">
 
   <style>
@@ -157,7 +158,7 @@
         <div class="legend-item"><div class="legend-dot" style="background: #e50914;"></div> Seleccionado</div>
       </div>
 
-      <!-- Selector de Cantidades Adaptado a styles.css -->
+      <!-- Selector de Cantidades -->
       <div class="ticket-counters">
         <h4>Asigná tus entradas (Butacas seleccionadas: <span id="countSelectedSeats" style="color: #fff;">0</span>)</h4>
 
@@ -235,7 +236,6 @@
     <p>© 2026 CineNova. Todos los derechos reservados.</p>
   </footer>
 
-  <!-- RUTAS CORREGIDAS PARA LOS SCRIPTS -->
   <script src="./Java.Script/cine-api.js"></script>
   <script>
     function calcularTotalTicket(preciosArticulos, diaDeLaSemana) {
@@ -260,7 +260,6 @@
       return total;
     }
 
-    // Función para obtener el número de semana actual del año
     function getWeekNumber(d) {
       d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
       d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
@@ -270,7 +269,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. CARRUSEL HERO AUTOMÁTICO
       const slides = document.querySelectorAll('.hero-slide');
       if (slides.length > 0) {
         let slideActual = 0;
@@ -281,7 +279,6 @@
         }, 5000);
       }
 
-      // 2. SISTEMA DE LOGIN INICIAL
       let usuarioActivo = localStorage.getItem('usuario_activo');
       const btnLogin = document.getElementById('btnLogin');
 
@@ -313,7 +310,6 @@
         });
       }
 
-      // Control de enlaces del menú
       const navEstrenos = document.getElementById('navEstrenos');
       if (navEstrenos) {
         navEstrenos.addEventListener('click', (e) => {
@@ -327,11 +323,16 @@
       const closePromo = document.getElementById('closePromo');
 
       if (promoModal) {
+        if (navPromos) {
+          navPromos.addEventListener('click', (e) => {
+            e.preventDefault();
+            promoModal.classList.add('open');
+          });
+        }
         if (closePromo) closePromo.addEventListener('click', () => promoModal.classList.remove('open'));
         promoModal.addEventListener('click', (e) => { if(e.target === promoModal) promoModal.classList.remove('open'); });
       }
 
-      // Generador de Cupón Sorpresa
       const btnGenerateCoupon = document.getElementById('btnGenerateCoupon');
       const couponResult = document.getElementById('couponResult');
       const cupones = ['NOVA20', 'POCHOCLOSFREE', 'CINE50', 'VIPUPGRADE', 'SUPERNOVA10'];
@@ -369,7 +370,6 @@
         });
       }
 
-      // 3. BASE DE DATOS DE PELÍCULAS ARGENTINAS (ROTACIÓN SEMANAL)
       const weeklyMovies = [
         [
           {
@@ -442,7 +442,6 @@
       const preciosEntradas = { "mayor": 6000, "menor": 4500, "jubilado": 3000 };
       let seleccionFinal = { pelicula: "", fecha: "", hora: "" };
 
-      // 4. CARGAR DÍAS DE LA SEMANA
       const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
       const mesesAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
       const dateBtns = document.querySelectorAll('.date-btn');
@@ -461,5 +460,13 @@
         }
       }
 
-      // 5. FUNCIÓN PARA ACTUALIZAR CARTELERA SEGÚN EL DÍA
-      function actualizarCartelera(boton = document.q
+      function actualizarCartelera(boton = document.querySelector('.date-btn.active')) {
+        if(!boton) return;
+
+        dateBtns.forEach(b => b.classList.remove('active'));
+        boton.classList.add('active');
+
+        let numDia = parseInt(boton.dataset.numeroDiaSemana);
+        let esFinde = (numDia === 0 || numDia === 5 || numDia === 6);
+
+        const promoBanner
