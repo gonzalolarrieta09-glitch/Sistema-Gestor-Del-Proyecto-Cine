@@ -1,7 +1,7 @@
 // Función para calcular descuentos (Martes 2x1 / Miércoles 50% OFF)
 function calcularTotalTicket(preciosArticulos, diaDeLaSemana) {
   if (!preciosArticulos || preciosArticulos.length === 0) return 0;
-  
+
   let total = 0;
   const dia = diaDeLaSemana.toLowerCase();
   const subtotal = preciosArticulos.reduce((acc, precio) => acc + precio, 0);
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 1. Verificamos si hay sesión activa en localStorage
   let usuarioActivo = localStorage.getItem('usuario_activo');
   const btnLogin = document.getElementById('btnLogin');
-  
+
   function actualizarBotonLogin() {
     if (btnLogin) {
       if (usuarioActivo) {
@@ -51,11 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 5000);
   }
 
-  // Redirigir a la página de login al hacer clic en Iniciar Sesión
+  // Redirigir a la página de login al hacer clic en Iniciar Sesión (Ruta corregida)
   if (btnLogin) {
     btnLogin.addEventListener('click', () => {
       if (!usuarioActivo) {
-        window.location.href = './login.html';
+        window.location.href = './Login/login.html';
       } else {
         if (confirm(`Sesión activa: ${usuarioActivo}\n¿Deseas cerrar sesión?`)) {
           localStorage.removeItem('usuario_activo');
@@ -89,16 +89,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if (closePromo && promoModal) closePromo.addEventListener('click', () => promoModal.classList.remove('open'));
   if (promoModal) promoModal.addEventListener('click', (e) => { if(e.target === promoModal) promoModal.classList.remove('open'); });
 
-  // Generador de Cupón Sorpresa
+  // Generador de Cupón Sorpresa (Ruta corregida)
   const btnGenerateCoupon = document.getElementById('btnGenerateCoupon');
   const couponResult = document.getElementById('couponResult');
   const cupones = ['NOVA20', 'POCHOCLOSFREE', 'CINE50', 'VIPUPGRADE', 'SUPERNOVA10'];
-  
+
   if (btnGenerateCoupon) {
     btnGenerateCoupon.addEventListener('click', () => {
       if (!usuarioActivo) {
         alert("⚠️ Debes iniciar sesión para poder generar y ver tu cupón sorpresa.");
-        window.location.href = './login.html';
+        window.location.href = './Login/login.html';
         return; 
       }
       let cuponAleatorio = cupones[Math.floor(Math.random() * cupones.length)];
@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let numDia = parseInt(boton.dataset.numeroDiaSemana);
     let esFinde = (numDia === 0 || numDia === 5 || numDia === 6);
-    
+
     const promoBanner = document.getElementById('promoBanner');
     if (promoBanner) {
       if (numDia === 3) {
@@ -206,13 +206,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
     const selectedCategory = categoryFilter ? categoryFilter.value.toLowerCase() : "all";
     const peliculasDOM = document.querySelectorAll('.movie-card');
-    
+
     peliculasDOM.forEach(card => {
       let titulo = card.dataset.title;
       let categorias = card.dataset.category || "";
       let infoPeli = carteleraInfo[titulo];
       let contenedorHorarios = card.querySelector('.showtimes-container');
-      
+
       if (!contenedorHorarios) return;
       contenedorHorarios.innerHTML = '';
 
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (coincideBusqueda && coincideCategoria && estaDisponibleElDia) {
         card.style.display = "flex"; 
         let horariosAMostrar = esFinde ? infoPeli.horariosFinde : infoPeli.horariosSemana;
-        
+
         horariosAMostrar.forEach(hora => {
           let btnHora = document.createElement('button');
           btnHora.className = 'time-btn';
@@ -272,7 +272,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!seatsContainer) return;
     seatsContainer.innerHTML = '';
 
-    // Resetear contadores de cantidades al abrir el modal (se usa textContent para los spans)
     const qMayor = document.getElementById('qtyMayor');
     const qMenor = document.getElementById('qtyMenor');
     const qJubilado = document.getElementById('qtyJubilado');
@@ -289,7 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
       numLeft.textContent = r.row;
       rowDiv.appendChild(numLeft);
 
-      // Bloque Izquierdo
       const leftBlock = document.createElement('div');
       leftBlock.className = 'seats-block';
       r.left.forEach(seatNum => {
@@ -304,12 +302,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       rowDiv.appendChild(leftBlock);
 
-      // Pasillo central
       const aisle = document.createElement('div');
       aisle.className = 'aisle';
       rowDiv.appendChild(aisle);
 
-      // Bloque Derecho
       const rightBlock = document.createElement('div');
       rightBlock.className = 'seats-block';
       r.right.forEach(seatNum => {
@@ -335,7 +331,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (countSpan) countSpan.textContent = selected.length;
   }
 
-  // Lógica de botones + y - para las entradas
   document.querySelectorAll('.btn-plus').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const targetId = e.target.getAttribute('data-target');
@@ -357,10 +352,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // Preparar compra (Ruta corregida)
   function prepararCompra(titulo, fecha, hora) {
     if (!usuarioActivo) {
       alert("⚠️ Debes iniciar sesión antes de seleccionar entradas y butacas.");
-      window.location.href = './login.html';
+      window.location.href = './Login/login.html';
       return;
     }
 
@@ -396,7 +392,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Se usa textContent en lugar de value para obtener las cantidades
       const qMayor = parseInt(document.getElementById('qtyMayor')?.textContent) || 0;
       const qMenor = parseInt(document.getElementById('qtyMenor')?.textContent) || 0;
       const qJubilado = parseInt(document.getElementById('qtyJubilado')?.textContent) || 0;
@@ -410,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const numVenta = Math.floor(Math.random() * 90000000) + 10000000;
       const numFuncion = Math.floor(Math.random() * 9000) + 1000;
       const peliData = carteleraInfo[seleccionFinal.pelicula];
-      
+
       let preciosArticulos = [];
       for(let i=0; i<qMayor; i++) preciosArticulos.push(preciosEntradas.mayor);
       for(let i=0; i<qMenor; i++) preciosArticulos.push(preciosEntradas.menor);
@@ -418,7 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const diaDeLaSemana = seleccionFinal.fecha.split(' ')[0];
       const precioTotal = calcularTotalTicket(preciosArticulos, diaDeLaSemana);
-      
+
       let butacasIds = [];
       selected.forEach(s => butacasIds.push(s.textContent));
 
@@ -432,7 +427,6 @@ document.addEventListener('DOMContentLoaded', () => {
       setVal('recButacas', butacasIds.join(', '));
       setVal('recCant', selected.length);
 
-      // Renderizar los tipos de entrada uno abajo del otro en el comprobante con su cantidad
       const recTiposContainer = document.getElementById('recTiposContainer');
       if (recTiposContainer) {
         recTiposContainer.innerHTML = '';
@@ -446,7 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
           recTiposContainer.innerHTML += `<div class="receipt-row"><span>Jubilado x${qJubilado}:</span> <strong>$${(qJubilado * preciosEntradas.jubilado).toLocaleString('es-AR')}</strong></div>`;
         }
       }
-      
+
       const filaDescuento = document.getElementById('filaDescuento');
       if (filaDescuento) {
         if (diaDeLaSemana.toLowerCase() === 'martes') {
