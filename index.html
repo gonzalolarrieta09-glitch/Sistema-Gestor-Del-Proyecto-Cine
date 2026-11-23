@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CineNova - Cartelera y Entradas</title>
-  <!-- RUTA CORREGIDA: Apunta directo a la carpeta Css en la raíz -->
+  <!-- RUTA CORREGIDA: Apunta a la carpeta Css en la raíz -->
   <link rel="stylesheet" href="./Css/styles.css">
 
   <style>
@@ -67,7 +67,7 @@
         <li><a href="./Promociones/promocion.html" id="navPromos">Promociones</a></li>
       </ul>
     </nav>
-    <button class="btn-login" id="btnLogin" onclick="window.location.href='./Login/login.html'">Iniciar Sesión</button>
+    <button class="btn-login" id="btnLogin">Iniciar Sesión</button>
   </header>
 
   <!-- Selector de Días -->
@@ -82,8 +82,10 @@
   </div>
 
   <section class="hero-paisajes" id="heroPaisajes">
-    <div class="hero-slide active" style="background-image:url('./Img/afiche-trenque.jpg')"></div>
-    <div class="hero-slide" style="background-image:url('./Img/puan-frontal-2.jpg')"></div>
+    <div class="hero-slide active" style="background-image:url('./Img/paisaje1.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('./Img/paisaje2.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('./Img/paisaje3.jpg')"></div>
+    <div class="hero-slide" style="background-image:url('./Img/paisaje4.jpg')"></div>
     <div class="hero-content">
       <h1>CINE ARGENTINO</h1>
       <p>Disfrutá de lo mejor del cine argentino con la más alta tecnología en imagen y sonido.</p>
@@ -235,6 +237,229 @@
 
   <!-- RUTAS CORREGIDAS PARA LOS SCRIPTS -->
   <script src="./Java.Script/cine-api.js"></script>
-  <script src="./script.js"></script>
-</body>
-</html>
+  <script>
+    function calcularTotalTicket(preciosArticulos, diaDeLaSemana) {
+      if (!preciosArticulos || preciosArticulos.length === 0) return 0;
+
+      let total = 0;
+      const dia = diaDeLaSemana.toLowerCase();
+      const subtotal = preciosArticulos.reduce((acc, precio) => acc + precio, 0);
+
+      if (dia === 'martes') {
+        const articulosOrdenados = [...preciosArticulos].sort((a, b) => b - a);
+        for (let i = 0; i < articulosOrdenados.length; i++) {
+          if (i % 2 === 0) {
+            total += articulosOrdenados[i];
+          }
+        }
+      } else if (dia === 'miercoles' || dia === 'miércoles') {
+        total = subtotal * 0.5;
+      } else {
+        total = subtotal;
+      }
+      return total;
+    }
+
+    // Función para obtener el número de semana actual del año
+    function getWeekNumber(d) {
+      d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+      return weekNo;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. CARRUSEL HERO AUTOMÁTICO
+      const slides = document.querySelectorAll('.hero-slide');
+      if (slides.length > 0) {
+        let slideActual = 0;
+        setInterval(() => {
+          slides[slideActual].classList.remove('active');
+          slideActual = (slideActual + 1) % slides.length;
+          slides[slideActual].classList.add('active');
+        }, 5000);
+      }
+
+      // 2. SISTEMA DE LOGIN INICIAL
+      let usuarioActivo = localStorage.getItem('usuario_activo');
+      const btnLogin = document.getElementById('btnLogin');
+
+      function actualizarBotonLogin() {
+        if (btnLogin) {
+          if (usuarioActivo) {
+            btnLogin.textContent = "Mi Cuenta";
+            btnLogin.style.backgroundColor = "#28a745";
+          } else {
+            btnLogin.textContent = "Iniciar Sesión";
+            btnLogin.style.backgroundColor = "#e50914";
+          }
+        }
+      }
+      actualizarBotonLogin();
+
+      if (btnLogin) {
+        btnLogin.addEventListener('click', () => {
+          if (!usuarioActivo) {
+            window.location.href = './Login/login.html';
+          } else {
+            if (confirm(`Sesión activa: ${usuarioActivo}\n¿Deseas cerrar sesión?`)) {
+              localStorage.removeItem('usuario_activo');
+              usuarioActivo = null;
+              actualizarBotonLogin();
+              alert("Sesión cerrada.");
+            }
+          }
+        });
+      }
+
+      // Control de enlaces del menú
+      const navEstrenos = document.getElementById('navEstrenos');
+      if (navEstrenos) {
+        navEstrenos.addEventListener('click', (e) => {
+          e.preventDefault();
+          document.querySelector('.movies-grid').scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+
+      const navPromos = document.getElementById('navPromos');
+      const promoModal = document.getElementById('promoModal');
+      const closePromo = document.getElementById('closePromo');
+
+      if (promoModal) {
+        if (closePromo) closePromo.addEventListener('click', () => promoModal.classList.remove('open'));
+        promoModal.addEventListener('click', (e) => { if(e.target === promoModal) promoModal.classList.remove('open'); });
+      }
+
+      // Generador de Cupón Sorpresa
+      const btnGenerateCoupon = document.getElementById('btnGenerateCoupon');
+      const couponResult = document.getElementById('couponResult');
+      const cupones = ['NOVA20', 'POCHOCLOSFREE', 'CINE50', 'VIPUPGRADE', 'SUPERNOVA10'];
+
+      if (btnGenerateCoupon) {
+        btnGenerateCoupon.addEventListener('click', () => {
+          if (!usuarioActivo) {
+            alert("⚠️ Debes iniciar sesión para poder generar y ver tu cupón sorpresa.");
+            window.location.href = './Login/login.html';
+            return; 
+          }
+          let cuponAleatorio = cupones[Math.floor(Math.random() * cupones.length)];
+          if (couponResult) couponResult.textContent = cuponAleatorio;
+          navigator.clipboard.writeText(cuponAleatorio).then(() => {
+            alert(`¡Felicidades! Tu código ${cuponAleatorio} se copió al portapapeles.`);
+          });
+          btnGenerateCoupon.textContent = "Cupón Generado ✔️";
+          btnGenerateCoupon.style.backgroundColor = "#28a745";
+          btnGenerateCoupon.disabled = true;
+        });
+      }
+
+      const btnModoAhorro = document.getElementById('btnModoAhorro');
+      if (btnModoAhorro) {
+        btnModoAhorro.addEventListener('click', () => {
+          const dateBtnsArray = Array.from(document.querySelectorAll('.date-btn'));
+          const diaAhorro = dateBtnsArray.find(btn => btn.dataset.numeroDiaSemana == "2" || btn.dataset.numeroDiaSemana == "3");
+          if (diaAhorro) {
+            diaAhorro.click(); 
+            if (promoModal) promoModal.classList.remove('open'); 
+            document.querySelector('.movies-grid').scrollIntoView({ behavior: 'smooth' }); 
+          } else {
+            alert("En los próximos 7 días no tenemos promociones programadas.");
+          }
+        });
+      }
+
+      // 3. BASE DE DATOS DE PELÍCULAS ARGENTINAS (ROTACIÓN SEMANAL)
+      const weeklyMovies = [
+        [
+          {
+            title: "Relatos Salvajes", category: "comedia drama", meta: "Comedia negra / Drama • 122 min", 
+            poster: "https://upload.wikimedia.org/wikipedia/en/6/60/Wild_Tales_poster.jpg", diasPermitidos: [0, 1, 2, 3, 4, 5, 6],
+            horariosSemana: ["17:30", "20:00", "22:30"], horariosFinde: ["15:00", "18:00", "21:00", "23:45"],
+            sala: "Sala 1 (INCAA)", clasificacion: "SAM 16"
+          },
+          {
+            title: "El Secreto de sus Ojos", category: "misterio drama romance", meta: "Drama / Misterio • 129 min", 
+            poster: "https://upload.wikimedia.org/wikipedia/en/9/9f/The_Secret_in_Their_Eyes_poster.jpg", diasPermitidos: [0, 4, 5, 6],
+            horariosSemana: ["19:00"], horariosFinde: ["19:30", "22:45"],
+            sala: "Sala 2 (Atmos)", clasificacion: "SAM 13"
+          },
+          {
+            title: "Nueve Reinas", category: "misterio comedia", meta: "Policial / Comedia • 114 min", 
+            poster: "https://upload.wikimedia.org/wikipedia/en/2/25/Nueve_reinas.jpg", diasPermitidos: [0, 2, 4, 6],
+            horariosSemana: ["16:00"], horariosFinde: ["15:30"],
+            sala: "Sala 1 (INCAA)", clasificacion: "SAM 13"
+          },
+          {
+            title: "Esperando la Carroza", category: "comedia", meta: "Comedia de culto • 94 min", 
+            poster: "https://upload.wikimedia.org/wikipedia/en/2/26/Esperando_la_carroza.jpg", diasPermitidos: [1, 2, 3],
+            horariosSemana: ["18:15", "20:45"], horariosFinde: [],
+            sala: "Sala 3", clasificacion: "ATP"
+          }
+        ],
+        [
+          {
+            title: "Argentina, 1985", category: "drama", meta: "Drama Histórico • 140 min", 
+            poster: "https://upload.wikimedia.org/wikipedia/en/7/77/Argentina%2C_1985_poster.jpg", diasPermitidos: [0, 1, 2, 3, 4, 5, 6],
+            horariosSemana: ["18:00", "21:00"], horariosFinde: ["16:00", "19:00", "22:15"],
+            sala: "Sala 1 (INCAA)", clasificacion: "SAM 13"
+          },
+          {
+            title: "El Ángel", category: "drama misterio", meta: "Policial / Drama • 118 min", 
+            poster: "https://upload.wikimedia.org/wikipedia/en/6/69/The_Angel_%28El_%C3%81ngel%29_poster.jpg", diasPermitidos: [0, 4, 5, 6],
+            horariosSemana: ["20:15"], horariosFinde: ["20:30", "23:00"],
+            sala: "Sala 2 (Atmos)", clasificacion: "SAM 16"
+          },
+          {
+            title: "El Clan", category: "drama misterio", meta: "Suspenso / Drama • 110 min", 
+            poster: "https://upload.wikimedia.org/wikipedia/en/0/07/El_Clan_poster.jpg", diasPermitidos: [0, 2, 4, 6],
+            horariosSemana: ["17:00"], horariosFinde: ["17:30"],
+            sala: "Sala 1 (INCAA)", clasificacion: "SAM 16"
+          },
+          {
+            title: "Puan", category: "comedia drama", meta: "Comedia dramática • 110 min", 
+            poster: "./Img/puan-frontal-2.jpg", diasPermitidos: [1, 2, 3],
+            horariosSemana: ["16:30", "19:45"], horariosFinde: [],
+            sala: "Sala 3", clasificacion: "ATP"
+          }
+        ]
+      ];
+
+      const currentWeekIndex = getWeekNumber(new Date()) % weeklyMovies.length;
+      const peliculasActivas = weeklyMovies[currentWeekIndex];
+
+      const carteleraInfo = {};
+      peliculasActivas.forEach(peli => {
+        carteleraInfo[peli.title] = {
+          diasPermitidos: peli.diasPermitidos,
+          horariosSemana: peli.horariosSemana,
+          horariosFinde: peli.horariosFinde,
+          sala: peli.sala,
+          clasificacion: peli.clasificacion
+        };
+      });
+
+      const preciosEntradas = { "mayor": 6000, "menor": 4500, "jubilado": 3000 };
+      let seleccionFinal = { pelicula: "", fecha: "", hora: "" };
+
+      // 4. CARGAR DÍAS DE LA SEMANA
+      const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+      const mesesAnio = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      const dateBtns = document.querySelectorAll('.date-btn');
+
+      for (let i = 0; i < 7; i++) {
+        const fecha = new Date();
+        fecha.setDate(fecha.getDate() + i);
+
+        const numDiaSemana = fecha.getDay();
+        const btn = document.getElementById('day-' + i);
+
+        if (btn) {
+          btn.textContent = diasSemana[numDiaSemana] + ' ' + fecha.getDate() + ' ' + mesesAnio[fecha.getMonth()];
+          btn.dataset.numeroDiaSemana = numDiaSemana;
+          btn.dataset.textoFecha = btn.textContent;
+        }
+      }
+
+      // 5. FUNCIÓN PARA ACTUALIZAR CARTELERA SEGÚN EL DÍA
+      function actualizarCartelera(boton = document.q
