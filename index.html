@@ -469,4 +469,301 @@
         let numDia = parseInt(boton.dataset.numeroDiaSemana);
         let esFinde = (numDia === 0 || numDia === 5 || numDia === 6);
 
-        const promoBanner
+                const promoBanner = document.getElementById('promoBanner');
+        if (promoBanner) {
+          if (numDia === 3) {
+            promoBanner.textContent = "🎟️ ¡Miércoles de Cine! 50% de descuento en todas las funciones.";
+            promoBanner.style.display = "block";
+          } else if (numDia === 2) {
+            promoBanner.textContent = "🍿 ¡Martes 2x1 en entradas comprando online!";
+            promoBanner.style.display = "block";
+          } else {
+            promoBanner.style.display = "none";
+          }
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
+        const selectedCategory = categoryFilter ? categoryFilter.value.toLowerCase() : "all";
+
+        const container = document.getElementById('movies-container');
+        if(!container) return;
+        container.innerHTML = '';
+
+        peliculasActivas.forEach(peli => {
+          const infoPeli = carteleraInfo[peli.title];
+          const coincideBusqueda = peli.title.toLowerCase().includes(searchTerm);
+          const coincideCategoria = selectedCategory === 'all' || peli.category.includes(selectedCategory);
+          const estaDisponibleElDia = infoPeli && infoPeli.diasPermitidos.includes(numDia);
+
+          if (coincideBusqueda && coincideCategoria && estaDisponibleElDia) {
+            const card = document.createElement('article');
+            card.className = 'movie-card';
+            card.dataset.title = peli.title;
+            card.dataset.category = peli.category;
+
+            let horariosAMostrar = esFinde ? infoPeli.horariosFinde : infoPeli.horariosSemana;
+
+            card.innerHTML = `
+              <img class="movie-poster" src="${peli.poster}" alt="${peli.title}">
+              <div class="movie-info">
+                <h3 class="movie-title">${peli.title}</h3>
+                <p class="movie-meta">${peli.meta}</p>
+                <div class="showtimes-container"></div>
+              </div>
+            `;
+
+            const horariosContainer = card.querySelector('.showtimes-container');
+            horariosAMostrar.forEach(hora => {
+              let btnHora = document.createElement('button');
+              btnHora.className = 'time-btn';
+              btnHora.textContent = hora;
+
+              btnHora.addEventListener('click', () => {
+                prepararCompra(peli.title, boton.dataset.textoFecha, hora);
+              });
+
+              horariosContainer.appendChild(btnHora);
+            });
+
+            container.appendChild(card);
+          }
+        });
+      }
+
+      actualizarCartelera(document.getElementById('day-0'));
+
+      dateBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          actualizarCartelera(this);
+        });
+      });
+
+      const searchInput = document.getElementById('searchInput');
+      const categoryFilter = document.getElementById('categoryFilter');
+
+      if (searchInput) {
+        searchInput.addEventListener('input', () => actualizarCartelera());
+      }
+      if (categoryFilter) {
+        categoryFilter.addEventListener('change', () => actualizarCartelera());
+      }
+
+      const modal = document.getElementById('ticketModal');
+      const modalTitle = document.getElementById('modalMovieTitle');
+      const closeBtn = document.querySelector('.modal-close');
+      const seatsContainer = document.getElementById('seatsContainer');
+      const btnConfirmar = document.getElementById('btnConfirmar');
+
+      const rowsData = [
+        { row: 'A', left: ['1A', '2A', '3A', '4A'], right: ['5A', '6A', '7A', '8A'] },
+        { row: 'B', left: ['1B', '2B', '3B', '4B'], right: ['5B', '6B', '7B', '8B'] },
+        { row: 'C', left: ['1C', '2C', '3C', '4C'], right: ['5C', '6C', '7C', '8C'] },
+        { row: 'D', left: ['1D', '2D', '3D', '4D'], right: ['5D', '6D', '7D', '8D'] },
+        { row: 'E', left: ['1E', '2E', '3E', '4E'], right: ['5E', '6E', '7E', '8E'] },
+        { row: 'F', left: ['1F', '2F', '3F', '4F'], right: ['5F', '6F', '7F', '8F'] }
+      ];
+
+      function renderSeats() {
+        if (!seatsContainer) return;
+        seatsContainer.innerHTML = '';
+
+        const qMayor = document.getElementById('qtyMayor');
+        const qMenor = document.getElementById('qtyMenor');
+        const qJubilado = document.getElementById('qtyJubilado');
+        if(qMayor) qMayor.textContent = '0';
+        if(qMenor) qMenor.textContent = '0';
+        if(qJubilado) qJubilado.textContent = '0';
+
+        rowsData.forEach(r => {
+          const rowDiv = document.createElement('div');
+          rowDiv.className = 'seat-row';
+
+          const numLeft = document.createElement('span');
+          numLeft.className = 'row-number';
+          numLeft.textContent = r.row;
+          rowDiv.appendChild(numLeft);
+
+          const leftBlock = document.createElement('div');
+          leftBlock.className = 'seats-block';
+          r.left.forEach(seatNum => {
+            const seat = document.createElement('button');
+            seat.className = 'seat';
+            seat.textContent = seatNum;
+            seat.addEventListener('click', () => {
+              seat.classList.toggle('selected');
+              actualizarContadorButacas();
+            });
+            leftBlock.appendChild(seat);
+          });
+          rowDiv.appendChild(leftBlock);
+
+          const aisle = document.createElement('div');
+          aisle.className = 'aisle';
+          rowDiv.appendChild(aisle);
+
+          const rightBlock = document.createElement('div');
+          rightBlock.className = 'seats-block';
+          r.right.forEach(seatNum => {
+            const seat = document.createElement('button');
+            seat.className = 'seat';
+            seat.textContent = seatNum;
+            seat.addEventListener('click', () => {
+              seat.classList.toggle('selected');
+              actualizarContadorButacas();
+            });
+            rightBlock.appendChild(seat);
+          });
+          rowDiv.appendChild(rightBlock);
+
+          seatsContainer.appendChild(rowDiv);
+        });
+        actualizarContadorButacas();
+      }
+
+      function actualizarContadorButacas() {
+        const selected = document.querySelectorAll('.seat.selected');
+        const countSpan = document.getElementById('countSelectedSeats');
+        if (countSpan) countSpan.textContent = selected.length;
+      }
+
+      document.querySelectorAll('.btn-plus').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const targetId = e.target.getAttribute('data-target');
+          const span = document.getElementById(targetId);
+          if (span) {
+            span.textContent = parseInt(span.textContent || '0') + 1;
+          }
+        });
+      });
+
+      document.querySelectorAll('.btn-minus').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const targetId = e.target.getAttribute('data-target');
+          const span = document.getElementById(targetId);
+          if (span) {
+            let val = parseInt(span.textContent || '0');
+            if (val > 0) span.textContent = val - 1;
+          }
+        });
+      });
+
+      function prepararCompra(titulo, fecha, hora) {
+        if (!usuarioActivo) {
+          alert("⚠️ Debes iniciar sesión antes de seleccionar entradas y butacas.");
+          window.location.href = './Login/login.html';
+          return;
+        }
+
+        seleccionFinal.pelicula = titulo;
+        seleccionFinal.fecha = fecha;
+        seleccionFinal.hora = hora;
+
+        if (modalTitle) modalTitle.textContent = `Seleccioná tu butaca - ${titulo} (${fecha} - ${hora}hs)`;
+        renderSeats();
+        if (modal) modal.classList.add('open');
+      }
+
+      if (closeBtn && modal) {
+        closeBtn.addEventListener('click', () => {
+          modal.classList.remove('open');
+        });
+      }
+
+      window.addEventListener('click', (e) => {
+        if (modal && e.target === modal) {
+          modal.classList.remove('open');
+        }
+      });
+
+      const receiptModal = document.getElementById('receiptModal');
+      const btnCerrarRecibo = document.getElementById('btnCerrarRecibo');
+
+      if (btnConfirmar && modal) {
+        btnConfirmar.addEventListener('click', () => {
+          const selected = document.querySelectorAll('.seat.selected');
+          if (selected.length === 0) {
+            alert('Por favor selecciona al menos una butaca.');
+            return;
+          }
+
+          const qMayor = parseInt(document.getElementById('qtyMayor')?.textContent) || 0;
+          const qMenor = parseInt(document.getElementById('qtyMenor')?.textContent) || 0;
+          const qJubilado = parseInt(document.getElementById('qtyJubilado')?.textContent) || 0;
+          const totalTicketsIngresados = qMayor + qMenor + qJubilado;
+
+          if (totalTicketsIngresados !== selected.length) {
+            alert(`⚠️ La cantidad total de entradas ingresadas (${totalTicketsIngresados}) no coincide con el número de butacas seleccionadas (${selected.length}). Por favor ajustá los números.`);
+            return;
+          }
+
+          const numVenta = Math.floor(Math.random() * 90000000) + 10000000;
+          const numFuncion = Math.floor(Math.random() * 9000) + 1000;
+          const peliData = carteleraInfo[seleccionFinal.pelicula];
+
+          let preciosArticulos = [];
+          for(let i=0; i<qMayor; i++) preciosArticulos.push(preciosEntradas.mayor);
+          for(let i=0; i<qMenor; i++) preciosArticulos.push(preciosEntradas.menor);
+          for(let i=0; i<qJubilado; i++) preciosArticulos.push(preciosEntradas.jubilado);
+
+          const diaDeLaSemana = seleccionFinal.fecha.split(' ')[0];
+          const precioTotal = calcularTotalTicket(preciosArticulos, diaDeLaSemana);
+
+          let butacasIds = [];
+          selected.forEach(s => butacasIds.push(s.textContent));
+
+          const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+          setVal('recVenta', numVenta);
+          setVal('recFuncion', numFuncion);
+          setVal('recFecha', `${seleccionFinal.fecha} - ${seleccionFinal.hora}hs`);
+          setVal('recPeli', seleccionFinal.pelicula);
+          setVal('recClasif', peliData.clasificacion);
+          setVal('recSala', peliData.sala);
+          setVal('recButacas', butacasIds.join(', '));
+          setVal('recCant', selected.length);
+
+          const recTiposContainer = document.getElementById('recTiposContainer');
+          if (recTiposContainer) {
+            recTiposContainer.innerHTML = '';
+            if (qMayor > 0) {
+              recTiposContainer.innerHTML += `<div class="receipt-row"><span>General / Mayor x${qMayor}:</span> <strong>$${(qMayor * preciosEntradas.mayor).toLocaleString('es-AR')}</strong></div>`;
+            }
+            if (qMenor > 0) {
+              recTiposContainer.innerHTML += `<div class="receipt-row"><span>Menor de 16 años x${qMenor}:</span> <strong>$${(qMenor * preciosEntradas.menor).toLocaleString('es-AR')}</strong></div>`;
+            }
+            if (qJubilado > 0) {
+              recTiposContainer.innerHTML += `<div class="receipt-row"><span>Jubilado x${qJubilado}:</span> <strong>$${(qJubilado * preciosEntradas.jubilado).toLocaleString('es-AR')}</strong></div>`;
+            }
+          }
+
+          const filaDescuento = document.getElementById('filaDescuento');
+          if (filaDescuento) {
+            if (diaDeLaSemana.toLowerCase() === 'martes') {
+              filaDescuento.style.display = 'flex';
+              setVal('recPromo', 'Martes 2x1 aplicado');
+            } else if (diaDeLaSemana.toLowerCase() === 'miércoles' || diaDeLaSemana.toLowerCase() === 'miercoles') {
+              filaDescuento.style.display = 'flex';
+              setVal('recPromo', 'Miércoles 50% OFF aplicado');
+            } else {
+              filaDescuento.style.display = 'none';
+            }
+          }
+
+          setVal('recTotal', precioTotal.toLocaleString('es-AR'));
+
+          modal.classList.remove('open');
+          if (receiptModal) receiptModal.classList.add('open');
+        });
+      }
+
+      if (btnCerrarRecibo && receiptModal) {
+        btnCerrarRecibo.addEventListener('click', () => {
+          receiptModal.classList.remove('open');
+          alert("El comprobante se ha guardado en tu cuenta y enviado a tu correo registrado.");
+        });
+      }
+    });
+  </script>
+</body>
+</html>
